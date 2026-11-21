@@ -1,0 +1,625 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		67484AC001618C01CC9031B9 /* SolarTermCalculator.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 13E3428E19877270E5812A4F /* SolarTermCalculator.swift */; };
+		67C909BEBB652C63574DF31B /* LunarCalendarEngine.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 171924FED2306EB4F4B46A59 /* LunarCalendarEngine.swift */; };
+		E3318D3542171CE13AE3A4CD /* CalendarDayInfo.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 0E393D73D049582F9A796A6D /* CalendarDayInfo.swift */; };
+		6E87F0A7E17EC227633B5C95 /* MonthGridGenerator.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 06B9672128F92D0BA6EEA616 /* MonthGridGenerator.swift */; };
+		2E7B42B8CEEE9C8D3DB53F89 /* HolidayStore.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 25F2693F5817F916D312E161 /* HolidayStore.swift */; };
+		3CF4A3C8BC62512443212857 /* DaydropTheme.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 6B619E40AF814FFF071EF85C /* DaydropTheme.swift */; };
+		392379499D9719DB23B88345 /* AppPreferences.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 31A040E4EB591933DBD7AAA0 /* AppPreferences.swift */; };
+		8B29F8C4B9F5E39338F9AEE9 /* L10n.swift in AppSources */ = {isa = PBXBuildFile; fileRef = E5D6716FE0A50B9374DA95E0 /* L10n.swift */; };
+		E2A11BB7D83C63667F82C72B /* DaydropApp.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 97F7A34B017DDFB4140A869F /* DaydropApp.swift */; };
+		08CA59E912F15258FD8F3EF4 /* AppState.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 71961277645419B188815925 /* AppState.swift */; };
+		E6E23F3DB2AFD9F7FDF8D6B5 /* WindowManager.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */; };
+		17320BF20BDC778AD994A6BE /* CalendarGridView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = B222C257A6E677EA301B9A16 /* CalendarGridView.swift */; };
+		F9BAD14AD055E6208DCB39E7 /* DayDetailBannerView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */; };
+		BA5E671DD18E1E02F573F946 /* MonthYearPickerPopover.swift in AppSources */ = {isa = PBXBuildFile; fileRef = F58F9D6D57F761649BEB3AD2 /* MonthYearPickerPopover.swift */; };
+		2C129D33164241513373D236 /* MenuBarPopoverView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 4FFECD693EC83B25A231B2AA /* MenuBarPopoverView.swift */; };
+		2F9EE008D78ED04FE311711D /* YearOverviewView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = AA0C46359A37222D0F6658FC /* YearOverviewView.swift */; };
+		4FC25090CE9ACF993A1681BA /* ExpandedCalendarView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */; };
+		CC9B79480B975120C7ED85EA /* SettingsView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */; };
+		DBAF92D133176A8B560C6640 /* holidays_cn.json in AppResources */ = {isa = PBXBuildFile; fileRef = 62FB9BC2B155F3081B2D34BB /* holidays_cn.json */; };
+		81DFD2C3FAF0DB4430709378 /* Assets.xcassets in AppResources */ = {isa = PBXBuildFile; fileRef = D9E4920EC514D62F82540884 /* Assets.xcassets */; };
+		12F35E944812D59E2E1891EE /* SolarTermCalculator.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 13E3428E19877270E5812A4F /* SolarTermCalculator.swift */; };
+		57B8BBBB0B1E10A5EC73E26C /* LunarCalendarEngine.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 171924FED2306EB4F4B46A59 /* LunarCalendarEngine.swift */; };
+		68190F8A68B25F860230B179 /* CalendarDayInfo.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 0E393D73D049582F9A796A6D /* CalendarDayInfo.swift */; };
+		F0E8DF0EB185527FFAB5893E /* MonthGridGenerator.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 06B9672128F92D0BA6EEA616 /* MonthGridGenerator.swift */; };
+		ADB39C95C47C5E719DC2FC2A /* HolidayStore.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 25F2693F5817F916D312E161 /* HolidayStore.swift */; };
+		801FA46FDFB2966E975E004E /* DaydropTheme.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 6B619E40AF814FFF071EF85C /* DaydropTheme.swift */; };
+		5F7F8FF9FEF9950C252D631F /* AppPreferences.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 31A040E4EB591933DBD7AAA0 /* AppPreferences.swift */; };
+		A5D269B791FA1B2E178F2855 /* L10n.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = E5D6716FE0A50B9374DA95E0 /* L10n.swift */; };
+		2FA0E278D7A4F237B7150208 /* DaydropWidgetBundle.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 3D2C6BD3F2F10CBFF04937DA /* DaydropWidgetBundle.swift */; };
+		34EDD9E00516449BEB3F7FF5 /* DaydropTimelineProvider.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = BBD804DB754832D0F7A43CC2 /* DaydropTimelineProvider.swift */; };
+		1B67D73C96ECE3B6C4EE409D /* SmallCalendarWidgetView.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = D5BB51DA366CD4291709F0DB /* SmallCalendarWidgetView.swift */; };
+		2722EA80C1BE67F33C3DB8DF /* MediumCalendarWidgetView.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 67F4C966ABEC05C4F52FC2E0 /* MediumCalendarWidgetView.swift */; };
+		BF7D9D7A267671E165983FFF /* LargeCalendarWidgetView.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 90C7DAF0E165030AD6C10DC7 /* LargeCalendarWidgetView.swift */; };
+		B69AF10657371B8E39D2A170 /* holidays_cn.json in WidgetResources */ = {isa = PBXBuildFile; fileRef = 62FB9BC2B155F3081B2D34BB /* holidays_cn.json */; };
+		C28029B2B72A78B12723154E /* CalendarEngineTests.swift in TestSources */ = {isa = PBXBuildFile; fileRef = DEA717D09C33D99089BCD6AB /* CalendarEngineTests.swift */; };
+		7757254630778AA1BE135F32 /* InfoPlist.strings in AppResources */ = {isa = PBXBuildFile; fileRef = 02A928D866A9DB1A98B1349E /* InfoPlist.strings */; };
+		F3A09A5BC4F77720FF993B58 /* InfoPlist.strings in WidgetResources */ = {isa = PBXBuildFile; fileRef = 63FAC05EDA5528BBAA46CA41 /* InfoPlist.strings */; };
+		1F3A251CF258893CC9D6E3B5 /* DaydropWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6CDA861B450172EF7E50605A /* DaydropWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		86666D5104ABA59BDE61CBD9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3B103CB4AD4E1E64E0F66AA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6EC67AC77F1615CF74C8BF45;
+			remoteInfo = DaydropWidget;
+		};
+		55BDA4BBC05D2B8B6EB03025 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F3B103CB4AD4E1E64E0F66AA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7D72B074BFD4360F04445642;
+			remoteInfo = Daydrop;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A0F9BA577004FF00232FE6E7 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1F3A251CF258893CC9D6E3B5 /* DaydropWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		13E3428E19877270E5812A4F /* SolarTermCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SolarTermCalculator.swift"; path = "Shared/CalendarEngine/SolarTermCalculator.swift"; sourceTree = SOURCE_ROOT; };
+		171924FED2306EB4F4B46A59 /* LunarCalendarEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LunarCalendarEngine.swift"; path = "Shared/CalendarEngine/LunarCalendarEngine.swift"; sourceTree = SOURCE_ROOT; };
+		0E393D73D049582F9A796A6D /* CalendarDayInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CalendarDayInfo.swift"; path = "Shared/CalendarEngine/CalendarDayInfo.swift"; sourceTree = SOURCE_ROOT; };
+		06B9672128F92D0BA6EEA616 /* MonthGridGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MonthGridGenerator.swift"; path = "Shared/CalendarEngine/MonthGridGenerator.swift"; sourceTree = SOURCE_ROOT; };
+		25F2693F5817F916D312E161 /* HolidayStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "HolidayStore.swift"; path = "Shared/HolidayData/HolidayStore.swift"; sourceTree = SOURCE_ROOT; };
+		6B619E40AF814FFF071EF85C /* DaydropTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DaydropTheme.swift"; path = "Shared/Theme/DaydropTheme.swift"; sourceTree = SOURCE_ROOT; };
+		31A040E4EB591933DBD7AAA0 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppPreferences.swift"; path = "Shared/Settings/AppPreferences.swift"; sourceTree = SOURCE_ROOT; };
+		E5D6716FE0A50B9374DA95E0 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "L10n.swift"; path = "Shared/Localization/L10n.swift"; sourceTree = SOURCE_ROOT; };
+		62FB9BC2B155F3081B2D34BB /* holidays_cn.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "holidays_cn.json"; path = "Shared/HolidayData/holidays_cn.json"; sourceTree = SOURCE_ROOT; };
+		97F7A34B017DDFB4140A869F /* DaydropApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DaydropApp.swift"; path = "Daydrop/DaydropApp.swift"; sourceTree = SOURCE_ROOT; };
+		71961277645419B188815925 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppState.swift"; path = "Daydrop/AppState.swift"; sourceTree = SOURCE_ROOT; };
+		7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WindowManager.swift"; path = "Daydrop/Window/WindowManager.swift"; sourceTree = SOURCE_ROOT; };
+		B222C257A6E677EA301B9A16 /* CalendarGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CalendarGridView.swift"; path = "Daydrop/Views/CalendarGridView.swift"; sourceTree = SOURCE_ROOT; };
+		CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DayDetailBannerView.swift"; path = "Daydrop/Views/DayDetailBannerView.swift"; sourceTree = SOURCE_ROOT; };
+		F58F9D6D57F761649BEB3AD2 /* MonthYearPickerPopover.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MonthYearPickerPopover.swift"; path = "Daydrop/Views/MonthYearPickerPopover.swift"; sourceTree = SOURCE_ROOT; };
+		4FFECD693EC83B25A231B2AA /* MenuBarPopoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MenuBarPopoverView.swift"; path = "Daydrop/Views/MenuBarPopoverView.swift"; sourceTree = SOURCE_ROOT; };
+		AA0C46359A37222D0F6658FC /* YearOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "YearOverviewView.swift"; path = "Daydrop/Views/YearOverviewView.swift"; sourceTree = SOURCE_ROOT; };
+		CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ExpandedCalendarView.swift"; path = "Daydrop/Views/ExpandedCalendarView.swift"; sourceTree = SOURCE_ROOT; };
+		C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SettingsView.swift"; path = "Daydrop/Views/SettingsView.swift"; sourceTree = SOURCE_ROOT; };
+		D9E4920EC514D62F82540884 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Assets.xcassets"; path = "Daydrop/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+		9B7014EAD05827D4844FADFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info.plist"; path = "Daydrop/Info.plist"; sourceTree = SOURCE_ROOT; };
+		9D8C36255368823C697819CC /* Daydrop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Daydrop.entitlements"; path = "Daydrop/Daydrop.entitlements"; sourceTree = SOURCE_ROOT; };
+		3D2C6BD3F2F10CBFF04937DA /* DaydropWidgetBundle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DaydropWidgetBundle.swift"; path = "DaydropWidget/DaydropWidgetBundle.swift"; sourceTree = SOURCE_ROOT; };
+		BBD804DB754832D0F7A43CC2 /* DaydropTimelineProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DaydropTimelineProvider.swift"; path = "DaydropWidget/DaydropTimelineProvider.swift"; sourceTree = SOURCE_ROOT; };
+		D5BB51DA366CD4291709F0DB /* SmallCalendarWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SmallCalendarWidgetView.swift"; path = "DaydropWidget/Views/SmallCalendarWidgetView.swift"; sourceTree = SOURCE_ROOT; };
+		67F4C966ABEC05C4F52FC2E0 /* MediumCalendarWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "MediumCalendarWidgetView.swift"; path = "DaydropWidget/Views/MediumCalendarWidgetView.swift"; sourceTree = SOURCE_ROOT; };
+		90C7DAF0E165030AD6C10DC7 /* LargeCalendarWidgetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "LargeCalendarWidgetView.swift"; path = "DaydropWidget/Views/LargeCalendarWidgetView.swift"; sourceTree = SOURCE_ROOT; };
+		C1CD3D0810A94F5ED22D20E1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info.plist"; path = "DaydropWidget/Info.plist"; sourceTree = SOURCE_ROOT; };
+		FDC40FA92CF2AD12D4F8EE37 /* DaydropWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "DaydropWidget.entitlements"; path = "DaydropWidget/DaydropWidget.entitlements"; sourceTree = SOURCE_ROOT; };
+		DEA717D09C33D99089BCD6AB /* CalendarEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CalendarEngineTests.swift"; path = "DaydropTests/CalendarEngineTests.swift"; sourceTree = SOURCE_ROOT; };
+		102C5145FBA46737CBB62D0E /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "Daydrop/zh-Hans.lproj/InfoPlist.strings"; sourceTree = SOURCE_ROOT; };
+		0932B6889289937589C5447C /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "Daydrop/en.lproj/InfoPlist.strings"; sourceTree = SOURCE_ROOT; };
+		E114D480BEE98B3BB8B5B6B6 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "DaydropWidget/zh-Hans.lproj/InfoPlist.strings"; sourceTree = SOURCE_ROOT; };
+		254D41B828F58F4B2760EB36 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = "DaydropWidget/en.lproj/InfoPlist.strings"; sourceTree = SOURCE_ROOT; };
+		1AE05FD1A8761CAFF9F246A2 /* Daydrop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Daydrop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CDA861B450172EF7E50605A /* DaydropWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DaydropWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		86DF7CE5DF0E6DE7F94CB91C /* DaydropTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DaydropTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		F5AA0A33BDE98763683D2F8B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		2DA0481829039010BF044AEA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		63A703F9E3D25C7C578C4D52 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		EDD9036FFF07A7D5E844C435 = {
+			isa = PBXGroup;
+			children = (
+				D53484B82430865680AFA239 /* Shared */,
+				1F6F97EDBFA6E3CF3033307E /* Daydrop */,
+				9DB524FC7C91B96E2D1BC22D /* DaydropWidget */,
+				3DA88EBEEAF1D3D5353A3944 /* DaydropTests */,
+				C4E1BA22244072B6948DC015 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D53484B82430865680AFA239 /* Shared */ = {
+			isa = PBXGroup;
+			children = (
+				13E3428E19877270E5812A4F /* SolarTermCalculator.swift */,
+				171924FED2306EB4F4B46A59 /* LunarCalendarEngine.swift */,
+				0E393D73D049582F9A796A6D /* CalendarDayInfo.swift */,
+				06B9672128F92D0BA6EEA616 /* MonthGridGenerator.swift */,
+				25F2693F5817F916D312E161 /* HolidayStore.swift */,
+				6B619E40AF814FFF071EF85C /* DaydropTheme.swift */,
+				31A040E4EB591933DBD7AAA0 /* AppPreferences.swift */,
+				E5D6716FE0A50B9374DA95E0 /* L10n.swift */,
+				62FB9BC2B155F3081B2D34BB /* holidays_cn.json */,
+			);
+			name = Shared;
+			sourceTree = "<group>";
+		};
+		1F6F97EDBFA6E3CF3033307E /* Daydrop */ = {
+			isa = PBXGroup;
+			children = (
+				97F7A34B017DDFB4140A869F /* DaydropApp.swift */,
+				71961277645419B188815925 /* AppState.swift */,
+				7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */,
+				B222C257A6E677EA301B9A16 /* CalendarGridView.swift */,
+				CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */,
+				F58F9D6D57F761649BEB3AD2 /* MonthYearPickerPopover.swift */,
+				4FFECD693EC83B25A231B2AA /* MenuBarPopoverView.swift */,
+				AA0C46359A37222D0F6658FC /* YearOverviewView.swift */,
+				CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */,
+				C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */,
+				D9E4920EC514D62F82540884 /* Assets.xcassets */,
+				9B7014EAD05827D4844FADFE /* Info.plist */,
+				9D8C36255368823C697819CC /* Daydrop.entitlements */,
+				02A928D866A9DB1A98B1349E /* InfoPlist.strings */,
+			);
+			name = Daydrop;
+			sourceTree = "<group>";
+		};
+		9DB524FC7C91B96E2D1BC22D /* DaydropWidget */ = {
+			isa = PBXGroup;
+			children = (
+				3D2C6BD3F2F10CBFF04937DA /* DaydropWidgetBundle.swift */,
+				BBD804DB754832D0F7A43CC2 /* DaydropTimelineProvider.swift */,
+				D5BB51DA366CD4291709F0DB /* SmallCalendarWidgetView.swift */,
+				67F4C966ABEC05C4F52FC2E0 /* MediumCalendarWidgetView.swift */,
+				90C7DAF0E165030AD6C10DC7 /* LargeCalendarWidgetView.swift */,
+				C1CD3D0810A94F5ED22D20E1 /* Info.plist */,
+				FDC40FA92CF2AD12D4F8EE37 /* DaydropWidget.entitlements */,
+				63FAC05EDA5528BBAA46CA41 /* InfoPlist.strings */,
+			);
+			name = DaydropWidget;
+			sourceTree = "<group>";
+		};
+		3DA88EBEEAF1D3D5353A3944 /* DaydropTests */ = {
+			isa = PBXGroup;
+			children = (
+				DEA717D09C33D99089BCD6AB /* CalendarEngineTests.swift */,
+			);
+			name = DaydropTests;
+			sourceTree = "<group>";
+		};
+		C4E1BA22244072B6948DC015 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1AE05FD1A8761CAFF9F246A2 /* Daydrop.app */,
+				6CDA861B450172EF7E50605A /* DaydropWidget.appex */,
+				86DF7CE5DF0E6DE7F94CB91C /* DaydropTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7D72B074BFD4360F04445642 /* Daydrop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8D52145B62C04118D6D898F5 /* Build configuration list for PBXNativeTarget "Daydrop" */;
+			buildPhases = (
+				8B47791BF09C69C857AFF571 /* Sources */,
+				F5AA0A33BDE98763683D2F8B /* Frameworks */,
+				311C6EB152CD46322A875AFA /* Resources */,
+				A0F9BA577004FF00232FE6E7 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5F2F3C1C4D2DCD99C68DB2B7 /* PBXTargetDependency */,
+			);
+			name = Daydrop;
+			productName = Daydrop;
+			productReference = 1AE05FD1A8761CAFF9F246A2 /* Daydrop.app */;
+			productType = "com.apple.product-type.application";
+		};
+		6EC67AC77F1615CF74C8BF45 /* DaydropWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 80253C7C03C21C0D07620766 /* Build configuration list for PBXNativeTarget "DaydropWidget" */;
+			buildPhases = (
+				932F6D783DD28883A87AEA0F /* Sources */,
+				2DA0481829039010BF044AEA /* Frameworks */,
+				9FA61764632C39493E22A772 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DaydropWidget;
+			productName = DaydropWidget;
+			productReference = 6CDA861B450172EF7E50605A /* DaydropWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		7249A0FA76FE4D8C6E5A1726 /* DaydropTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CF227ADB30C181C1BC5758DC /* Build configuration list for PBXNativeTarget "DaydropTests" */;
+			buildPhases = (
+				EE024AB63A52835049903EB1 /* Sources */,
+				63A703F9E3D25C7C578C4D52 /* Frameworks */,
+				FEAED43796C12BA1F44FDA5B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E2B6779EDA8396DF5A507223 /* PBXTargetDependency */,
+			);
+			name = DaydropTests;
+			productName = DaydropTests;
+			productReference = 86DF7CE5DF0E6DE7F94CB91C /* DaydropTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F3B103CB4AD4E1E64E0F66AA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					7249A0FA76FE4D8C6E5A1726 = {
+						TestTargetID = 7D72B074BFD4360F04445642;
+					};
+				};
+			};
+			buildConfigurationList = 14106D35A17AD4574F55E1ED /* Build configuration list for PBXProject "Daydrop" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				"zh-Hans",
+				Base,
+			);
+			mainGroup = EDD9036FFF07A7D5E844C435;
+			productRefGroup = C4E1BA22244072B6948DC015 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7D72B074BFD4360F04445642 /* Daydrop */,
+				6EC67AC77F1615CF74C8BF45 /* DaydropWidget */,
+				7249A0FA76FE4D8C6E5A1726 /* DaydropTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		311C6EB152CD46322A875AFA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DBAF92D133176A8B560C6640 /* holidays_cn.json */,
+				81DFD2C3FAF0DB4430709378 /* Assets.xcassets */,
+				7757254630778AA1BE135F32 /* InfoPlist.strings */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9FA61764632C39493E22A772 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B69AF10657371B8E39D2A170 /* holidays_cn.json */,
+				F3A09A5BC4F77720FF993B58 /* InfoPlist.strings */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FEAED43796C12BA1F44FDA5B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8B47791BF09C69C857AFF571 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				67484AC001618C01CC9031B9 /* SolarTermCalculator.swift */,
+				67C909BEBB652C63574DF31B /* LunarCalendarEngine.swift */,
+				E3318D3542171CE13AE3A4CD /* CalendarDayInfo.swift */,
+				6E87F0A7E17EC227633B5C95 /* MonthGridGenerator.swift */,
+				2E7B42B8CEEE9C8D3DB53F89 /* HolidayStore.swift */,
+				3CF4A3C8BC62512443212857 /* DaydropTheme.swift */,
+				392379499D9719DB23B88345 /* AppPreferences.swift */,
+				8B29F8C4B9F5E39338F9AEE9 /* L10n.swift */,
+				E2A11BB7D83C63667F82C72B /* DaydropApp.swift */,
+				08CA59E912F15258FD8F3EF4 /* AppState.swift */,
+				E6E23F3DB2AFD9F7FDF8D6B5 /* WindowManager.swift */,
+				17320BF20BDC778AD994A6BE /* CalendarGridView.swift */,
+				F9BAD14AD055E6208DCB39E7 /* DayDetailBannerView.swift */,
+				BA5E671DD18E1E02F573F946 /* MonthYearPickerPopover.swift */,
+				2C129D33164241513373D236 /* MenuBarPopoverView.swift */,
+				2F9EE008D78ED04FE311711D /* YearOverviewView.swift */,
+				4FC25090CE9ACF993A1681BA /* ExpandedCalendarView.swift */,
+				CC9B79480B975120C7ED85EA /* SettingsView.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		932F6D783DD28883A87AEA0F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				12F35E944812D59E2E1891EE /* SolarTermCalculator.swift */,
+				57B8BBBB0B1E10A5EC73E26C /* LunarCalendarEngine.swift */,
+				68190F8A68B25F860230B179 /* CalendarDayInfo.swift */,
+				F0E8DF0EB185527FFAB5893E /* MonthGridGenerator.swift */,
+				ADB39C95C47C5E719DC2FC2A /* HolidayStore.swift */,
+				801FA46FDFB2966E975E004E /* DaydropTheme.swift */,
+				5F7F8FF9FEF9950C252D631F /* AppPreferences.swift */,
+				A5D269B791FA1B2E178F2855 /* L10n.swift */,
+				2FA0E278D7A4F237B7150208 /* DaydropWidgetBundle.swift */,
+				34EDD9E00516449BEB3F7FF5 /* DaydropTimelineProvider.swift */,
+				1B67D73C96ECE3B6C4EE409D /* SmallCalendarWidgetView.swift */,
+				2722EA80C1BE67F33C3DB8DF /* MediumCalendarWidgetView.swift */,
+				BF7D9D7A267671E165983FFF /* LargeCalendarWidgetView.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		EE024AB63A52835049903EB1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C28029B2B72A78B12723154E /* CalendarEngineTests.swift */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5F2F3C1C4D2DCD99C68DB2B7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6EC67AC77F1615CF74C8BF45 /* DaydropWidget */;
+			targetProxy = 86666D5104ABA59BDE61CBD9 /* PBXContainerItemProxy */;
+		};
+		E2B6779EDA8396DF5A507223 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7D72B074BFD4360F04445642 /* Daydrop */;
+			targetProxy = 55BDA4BBC05D2B8B6EB03025 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		02A928D866A9DB1A98B1349E /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				102C5145FBA46737CBB62D0E /* zh-Hans */,
+				0932B6889289937589C5447C /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+		63FAC05EDA5528BBAA46CA41 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E114D480BEE98B3BB8B5B6B6 /* zh-Hans */,
+				254D41B828F58F4B2760EB36 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		D8A045AC7ECE0993B1DA2CCD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D59C3432DC46498E98046531 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		D3E4ED352C38A02B3616D82F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Daydrop/Daydrop.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Daydrop/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		5021DB296FEAD9339D594CDE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Daydrop/Daydrop.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Daydrop/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.app;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		BB3FC06FB75B0C29ACB898AE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DaydropWidget/DaydropWidget.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DaydropWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		EAD534E15896A22D6ACC481A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = DaydropWidget/DaydropWidget.entitlements;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Manual;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DaydropWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.app.widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		540BF21427E1403624D8497C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Daydrop.app/Contents/MacOS/Daydrop";
+			};
+			name = Debug;
+		};
+		2D36B9D9F8174694C26D8C09 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "-";
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.daydrop.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Daydrop.app/Contents/MacOS/Daydrop";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		14106D35A17AD4574F55E1ED /* Build configuration list for PBXProject "Daydrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8A045AC7ECE0993B1DA2CCD /* Debug */,
+				D59C3432DC46498E98046531 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8D52145B62C04118D6D898F5 /* Build configuration list for PBXNativeTarget "Daydrop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D3E4ED352C38A02B3616D82F /* Debug */,
+				5021DB296FEAD9339D594CDE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		80253C7C03C21C0D07620766 /* Build configuration list for PBXNativeTarget "DaydropWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BB3FC06FB75B0C29ACB898AE /* Debug */,
+				EAD534E15896A22D6ACC481A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		CF227ADB30C181C1BC5758DC /* Build configuration list for PBXNativeTarget "DaydropTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				540BF21427E1403624D8497C /* Debug */,
+				2D36B9D9F8174694C26D8C09 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = F3B103CB4AD4E1E64E0F66AA /* Project object */;
+}
