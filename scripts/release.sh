@@ -50,4 +50,7 @@ gh release create "v${VERSION}" "dist/Daydrop-v${VERSION}-macOS.zip" \
   --title "知时 · Daydrop v${VERSION}" \
   --notes "${NOTES}"
 
-echo "✅ Released v${VERSION} successfully! Running Daydrop instances can now update in-app."
+echo "==> 7. Broadcasting real-time SSE update signal..."
+curl -fsS -H "Title: Daydrop Release" -d "v${VERSION}" "https://ntfy.sh/daydrop-iwtem-releases-7f3a9c2e" >/dev/null || true
+
+echo "✅ Released v${VERSION} and pushed real-time update notification to running Daydrop clients!"

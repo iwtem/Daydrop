@@ -33,6 +33,7 @@ APP_SWIFT = [
     "Daydrop/DaydropApp.swift",
     "Daydrop/AppState.swift",
     "Daydrop/Updater/AppUpdater.swift",
+    "Daydrop/Updater/UpdatePushListener.swift",
     "Daydrop/Window/WindowManager.swift",
     "Daydrop/Views/CalendarGridView.swift",
     "Daydrop/Views/DayDetailBannerView.swift",

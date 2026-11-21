@@ -106,6 +106,9 @@ struct SettingsView: View {
 
                 Section(l10n.sectionAppUpdate) {
                     Toggle(l10n.labelAutoCheckUpdates, isOn: $preferences.autoCheckUpdates)
+                        .onChange(of: preferences.autoCheckUpdates) { _, _ in
+                            updater.refreshPushSubscription()
+                        }
                     Toggle(l10n.labelAutoDownloadUpdates, isOn: $preferences.autoDownloadUpdates)
                     appUpdateRow
                 }
@@ -139,8 +142,23 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("\(l10n.labelCurrentVersion)：v\(updater.currentVersion)")
-                        .font(.system(size: 12.5, weight: .medium))
+                    HStack(spacing: 6) {
+                        Text("\(l10n.labelCurrentVersion)：v\(updater.currentVersion)")
+                            .font(.system(size: 12.5, weight: .medium))
+                        if updater.isPushConnected {
+                            HStack(spacing: 3) {
+                                Circle()
+                                    .fill(palette.solarTermAccent)
+                                    .frame(width: 6, height: 6)
+                                Text(l10n.pushConnectedHint)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 1.5)
+                            .background(Capsule().fill(palette.solarTermAccent.opacity(0.10)))
+                        }
+                    }
 
                     switch updater.state {
                     case .upToDate:

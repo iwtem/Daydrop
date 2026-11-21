@@ -1,6 +1,7 @@
 import Foundation
 import AppKit
 import Combine
+import UserNotifications
 
 public struct AppUpdateInfo: Equatable, Sendable {
     public let version: String
@@ -60,14 +61,17 @@ public final class AppUpdater: ObservableObject {
     @Published public var state: UpdateState = .idle
     @Published public var availableUpdate: AppUpdateInfo?
     @Published public var dismissedVersionForSession: String?
+    @Published public var isPushConnected: Bool = false
 
     private var stagedPackage: StagedUpdatePackage?
     private var periodicTimer: Timer?
     private var wakeObserver: NSObjectProtocol?
+    private var pushListener: UpdatePushListener?
+    private var lastETag: String?
     private var hasStartedScheduler = false
 
     public var currentVersion: String {
-        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.1.2"
+        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.2.0"
     }
 
     public var shouldShowBanner: Bool {
@@ -79,6 +83,7 @@ public final class AppUpdater: ObservableObject {
 
     deinit {
         periodicTimer?.invalidate()
+        pushListener?.stop()
         if let observer = wakeObserver {
             NSWorkspace.shared.notificationCenter.removeObserver(observer)
         }
@@ -125,31 +130,68 @@ public final class AppUpdater: ObservableObject {
         )
     }
 
-    // MARK: - Background Scheduler (Launch + Periodic 6h + Wake from Sleep)
+    // MARK: - Background Scheduler (Real-Time SSE Push + Periodic 6h Fallback + Wake)
 
     public func startBackgroundScheduler() {
         guard !hasStartedScheduler else { return }
         hasStartedScheduler = true
 
+        // 1. Start real-time SSE push listener if automatic updates are enabled
+        refreshPushSubscription()
+
+        // 2. Startup check (throttled to 6h fallback)
         checkIfDueInBackground()
 
-        // Periodic background check every 6 hours for long-running menu bar sessions
+        // 3. Periodic 6h fallback check (safety net in case push was missed while offline)
         periodicTimer = Timer.scheduledTimer(withTimeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.checkIfDueInBackground()
             }
         }
 
-        // Also check when Mac wakes from sleep (throttled to 6h interval)
+        // 4. Reconnect SSE & run fallback check on Mac wake from sleep
         wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
             forName: NSWorkspace.didWakeNotification,
             object: nil,
             queue: .main
         ) { [weak self] _ in
             Task { @MainActor in
+                if AppPreferences.shared.autoCheckUpdates {
+                    self?.pushListener?.restart()
+                }
                 self?.checkIfDueInBackground()
             }
         }
+    }
+
+    public func refreshPushSubscription() {
+        if AppPreferences.shared.autoCheckUpdates {
+            if pushListener == nil {
+                pushListener = UpdatePushListener { [weak self] versionHint in
+                    Task { @MainActor in
+                        await self?.handlePushSignal(versionHint: versionHint)
+                    }
+                }
+            }
+            pushListener?.start()
+            isPushConnected = true
+        } else {
+            pushListener?.stop()
+            isPushConnected = false
+        }
+    }
+
+    private func handlePushSignal(versionHint: String?) async {
+        guard AppPreferences.shared.autoCheckUpdates else { return }
+        // If push carries a version hint and it's not newer than current, skip unnecessary API call
+        if let hint = versionHint, !hint.isEmpty,
+           hint.rangeOfCharacter(from: .decimalDigits) != nil,
+           !Self.isVersion(hint, newerThan: currentVersion) {
+            return
+        }
+        // Bypass ETag cache slightly on explicit push signal so fresh release is fetched immediately
+        lastETag = nil
+        await checkForUpdates(silent: true)
     }
 
     private func checkIfDueInBackground() {
@@ -181,16 +223,32 @@ public final class AppUpdater: ObservableObject {
         request.timeoutInterval = 12
         request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept")
         request.setValue("Daydrop/\(currentVersion)", forHTTPHeaderField: "User-Agent")
+        if let etag = lastETag, silent {
+            request.setValue(etag, forHTTPHeaderField: "If-None-Match")
+        }
 
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
-            guard let http = response as? HTTPURLResponse, (200...299).contains(http.statusCode) else {
+            guard let http = response as? HTTPURLResponse else {
+                if !silent { state = .failed(L10n.current.updateCheckFailed) }
+                return
+            }
+
+            if http.statusCode == 304 {
+                AppPreferences.shared.lastUpdateCheckDate = Date()
+                return
+            }
+
+            guard (200...299).contains(http.statusCode) else {
                 if !silent {
                     state = .failed(L10n.current.updateCheckFailed)
                 }
                 return
             }
 
+            if let etag = http.value(forHTTPHeaderField: "ETag") {
+                lastETag = etag
+            }
             AppPreferences.shared.lastUpdateCheckDate = Date()
 
             guard let release = Self.parseLatestRelease(data) else {
@@ -326,6 +384,7 @@ public final class AppUpdater: ObservableObject {
                 workDirURL: workDir
             )
             state = .readyToInstall(update)
+            postUpdateReadyNotification(version: update.version)
         } catch {
             try? fm.removeItem(at: workDir)
             if silentErrors {
@@ -366,6 +425,25 @@ public final class AppUpdater: ObservableObject {
             NSApplication.shared.terminate(nil)
         } catch {
             state = .failed(error.localizedDescription)
+        }
+    }
+
+    private func postUpdateReadyNotification(version: String) {
+        guard Bundle.main.bundleURL.pathExtension == "app" else { return }
+        let center = UNUserNotificationCenter.current()
+        center.requestAuthorization(options: [.alert, .sound]) { granted, _ in
+            guard granted else { return }
+            let l10n = L10n.current
+            let content = UNMutableNotificationContent()
+            content.title = l10n.appBrandFooter
+            content.body = l10n.updateReadyNotificationBody(version)
+            content.sound = .default
+            let req = UNNotificationRequest(
+                identifier: "daydrop-update-ready-\(version)",
+                content: content,
+                trigger: nil
+            )
+            center.add(req)
         }
     }
 

@@ -395,8 +395,9 @@ public struct L10n: Sendable {
 
     // Software Updates
     public var sectionAppUpdate: String { isChinese ? "软件更新" : "Software Update" }
-    public var labelAutoCheckUpdates: String { isChinese ? "自动检查新版本" : "Check for Updates Automatically" }
+    public var labelAutoCheckUpdates: String { isChinese ? "实时接收更新推送" : "Real-Time Update Push" }
     public var labelAutoDownloadUpdates: String { isChinese ? "自动后台下载新版本" : "Download Updates Automatically" }
+    public var pushConnectedHint: String { isChinese ? "实时推送已连接" : "Push connected" }
     public var labelCurrentVersion: String { isChinese ? "当前版本" : "Current Version" }
     public var checkAppUpdate: String { isChinese ? "检查更新" : "Check for Updates" }
     public var checkingAppUpdate: String { isChinese ? "正在检查…" : "Checking…" }
@@ -417,6 +418,10 @@ public struct L10n: Sendable {
 
     public func readyToInstallBanner(_ version: String) -> String {
         isChinese ? "新版本 v\(version) 已就绪" : "v\(version) ready to install"
+    }
+
+    public func updateReadyNotificationBody(_ version: String) -> String {
+        isChinese ? "新版本 v\(version) 已下载完成，打开菜单栏即可重启更新。" : "v\(version) is downloaded and ready. Open Daydrop to restart & update."
     }
 
     public func downloadingPercent(_ pct: Int) -> String {

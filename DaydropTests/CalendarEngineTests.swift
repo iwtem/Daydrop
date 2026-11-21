@@ -226,4 +226,15 @@ final class CalendarEngineTests: XCTestCase {
         XCTAssertEqual(en.relativeDayLabel(from: base, to: inFiveDays, calendar: cal), "In 5d")
         XCTAssertEqual(en.relativeDayLabel(from: base, to: threeDaysAgo, calendar: cal), "3d ago")
     }
+
+    func testSSEPushParsing() {
+        let messageLine = #"data: {"id":"abc","time":1700000000,"event":"message","topic":"daydrop-iwtem-releases-7f3a9c2e","message":"v1.2.1"}"#
+        let keepaliveLine = #"data: {"id":"def","time":1700000010,"event":"keepalive","topic":"daydrop-iwtem-releases-7f3a9c2e"}"#
+        let openLine = #"data: {"id":"ghi","time":1700000001,"event":"open","topic":"daydrop-iwtem-releases-7f3a9c2e"}"#
+
+        XCTAssertEqual(UpdatePushListener.parseSSEDataLine(messageLine), "v1.2.1")
+        XCTAssertNil(UpdatePushListener.parseSSEDataLine(keepaliveLine))
+        XCTAssertNil(UpdatePushListener.parseSSEDataLine(openLine))
+        XCTAssertNil(UpdatePushListener.parseSSEDataLine("event: keepalive"))
+    }
 }

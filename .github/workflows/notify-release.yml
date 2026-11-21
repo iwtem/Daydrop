@@ -1,0 +1,18 @@
+name: Notify Daydrop Clients on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  push-notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Broadcast real-time update signal via ntfy SSE topic
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          curl -fsS \
+            -H "Title: Daydrop Release" \
+            -d "${RELEASE_TAG}" \
+            "https://ntfy.sh/daydrop-iwtem-releases-7f3a9c2e"
