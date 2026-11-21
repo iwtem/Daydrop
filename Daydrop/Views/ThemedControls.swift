@@ -159,7 +159,7 @@ enum MenuBarBadgedIcon {
 
             let dotDiameter: CGFloat = 5.6
             let dotRect = CGRect(
-                x: 16.5 - dotDiameter / 2,
+                x: 16.7 - dotDiameter / 2,
                 y: 15.8 - dotDiameter / 2,
                 width: dotDiameter,
                 height: dotDiameter
