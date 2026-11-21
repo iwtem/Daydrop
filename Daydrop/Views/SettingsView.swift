@@ -106,6 +106,7 @@ struct SettingsView: View {
 
                 Section(l10n.sectionAppUpdate) {
                     Toggle(l10n.labelAutoCheckUpdates, isOn: $preferences.autoCheckUpdates)
+                    Toggle(l10n.labelAutoDownloadUpdates, isOn: $preferences.autoDownloadUpdates)
                     appUpdateRow
                 }
             }
@@ -127,7 +128,7 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
         }
-        .frame(width: 480, height: 640)
+        .frame(width: 480, height: 670)
         .background(DaydropTheme.cardBackground(colorScheme))
         .preferredColorScheme(preferences.appearanceMode.preferredColorScheme)
         .background(WindowConfigurator(isPinnedOnTop: false, title: l10n.settingsTitle, hideTitlebarSeparator: true))
@@ -150,10 +151,14 @@ struct SettingsView: View {
                         Text(l10n.newVersionBanner(info.version))
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(palette.todayAccent)
-                    case .downloading(let progress):
+                    case .downloading(_, let progress):
                         Text(l10n.downloadingPercent(Int(progress * 100)))
                             .font(.system(size: 11))
                             .foregroundStyle(palette.todayAccent)
+                    case .readyToInstall(let info):
+                        Text(l10n.readyToInstallBanner(info.version))
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(palette.solarTermAccent)
                     case .installing:
                         Text(l10n.installingUpdate)
                             .font(.system(size: 11))
@@ -179,11 +184,17 @@ struct SettingsView: View {
                             .foregroundStyle(.secondary)
                     }
                 case .available:
-                    Button(l10n.updateAndRelaunch) {
-                        updater.installAvailableUpdate()
+                    Button(l10n.downloadUpdate) {
+                        updater.startManualDownload()
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(palette.todayAccent)
+                case .readyToInstall:
+                    Button(l10n.restartAndUpdate) {
+                        updater.restartAndInstallReadyUpdate()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(palette.solarTermAccent)
                 case .downloading, .installing:
                     ProgressView()
                         .controlSize(.small)
@@ -196,7 +207,7 @@ struct SettingsView: View {
                 }
             }
 
-            if case .downloading(let progress) = updater.state {
+            if case .downloading(_, let progress) = updater.state {
                 ProgressView(value: progress)
                     .tint(palette.todayAccent)
             }

@@ -165,7 +165,7 @@ struct MenuBarPopoverView: View {
     @ViewBuilder
     private var updateBannerIfNeeded: some View {
         switch updater.state {
-        case .downloading(let progress):
+        case .downloading(_, let progress):
             HStack(spacing: 8) {
                 ProgressView(value: progress)
                     .tint(palette.todayAccent)
@@ -180,6 +180,48 @@ struct MenuBarPopoverView: View {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .fill(palette.todayAccent.opacity(0.09))
             )
+
+        case .readyToInstall(let info):
+            if updater.shouldShowBanner {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.system(size: 13))
+                        .foregroundStyle(palette.solarTermAccent)
+
+                    Text(l10n.readyToInstallBanner(info.version))
+                        .font(.system(size: 11.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Button {
+                        updater.restartAndInstallReadyUpdate()
+                    } label: {
+                        Text(l10n.restartToUpdate)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 3.5)
+                            .background(Capsule().fill(palette.solarTermAccent))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        updater.dismissBannerForSession()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 9.5, weight: .bold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 11)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(palette.solarTermAccent.opacity(0.11))
+                )
+            }
 
         case .installing:
             HStack(spacing: 6) {
@@ -197,8 +239,8 @@ struct MenuBarPopoverView: View {
                     .fill(palette.todayAccent.opacity(0.09))
             )
 
-        default:
-            if updater.shouldShowBanner, let info = updater.availableUpdate {
+        case .available(let info):
+            if updater.shouldShowBanner {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.down.circle.fill")
                         .font(.system(size: 13))
@@ -211,9 +253,9 @@ struct MenuBarPopoverView: View {
                     Spacer()
 
                     Button {
-                        updater.installAvailableUpdate()
+                        updater.startManualDownload()
                     } label: {
-                        Text(l10n.updateNow)
+                        Text(l10n.downloadUpdate)
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 9)
@@ -238,6 +280,9 @@ struct MenuBarPopoverView: View {
                         .fill(palette.todayAccent.opacity(0.10))
                 )
             }
+
+        default:
+            EmptyView()
         }
     }
 

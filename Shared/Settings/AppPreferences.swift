@@ -63,6 +63,7 @@ public final class AppPreferences: ObservableObject {
         static let showHolidayBadges = "showHolidayBadges"
         static let showSolarTerms = "showSolarTerms"
         static let autoCheckUpdates = "autoCheckUpdates"
+        static let autoDownloadUpdates = "autoDownloadUpdates"
         static let lastUpdateCheckTimestamp = "lastUpdateCheckTimestamp"
         static let lastHolidaySyncTimestamp = "lastHolidaySyncTimestamp"
     }
@@ -118,6 +119,12 @@ public final class AppPreferences: ObservableObject {
     @Published public var autoCheckUpdates: Bool {
         didSet {
             defaults.set(autoCheckUpdates, forKey: Keys.autoCheckUpdates)
+        }
+    }
+
+    @Published public var autoDownloadUpdates: Bool {
+        didSet {
+            defaults.set(autoDownloadUpdates, forKey: Keys.autoDownloadUpdates)
         }
     }
 
@@ -199,6 +206,12 @@ public final class AppPreferences: ObservableObject {
             self.autoCheckUpdates = true
         } else {
             self.autoCheckUpdates = store.bool(forKey: Keys.autoCheckUpdates)
+        }
+
+        if store.object(forKey: Keys.autoDownloadUpdates) == nil {
+            self.autoDownloadUpdates = true
+        } else {
+            self.autoDownloadUpdates = store.bool(forKey: Keys.autoDownloadUpdates)
         }
     }
 

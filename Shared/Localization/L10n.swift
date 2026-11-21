@@ -396,13 +396,15 @@ public struct L10n: Sendable {
     // Software Updates
     public var sectionAppUpdate: String { isChinese ? "软件更新" : "Software Update" }
     public var labelAutoCheckUpdates: String { isChinese ? "自动检查新版本" : "Check for Updates Automatically" }
+    public var labelAutoDownloadUpdates: String { isChinese ? "自动后台下载新版本" : "Download Updates Automatically" }
     public var labelCurrentVersion: String { isChinese ? "当前版本" : "Current Version" }
     public var checkAppUpdate: String { isChinese ? "检查更新" : "Check for Updates" }
     public var checkingAppUpdate: String { isChinese ? "正在检查…" : "Checking…" }
     public var appUpToDate: String { isChinese ? "已是最新版本" : "You're up to date" }
-    public var updateNow: String { isChinese ? "立即更新" : "Update" }
-    public var updateAndRelaunch: String { isChinese ? "立即更新并重启" : "Update & Relaunch" }
-    public var installingUpdate: String { isChinese ? "正在安装并重启…" : "Installing & relaunching…" }
+    public var downloadUpdate: String { isChinese ? "下载更新" : "Download" }
+    public var restartToUpdate: String { isChinese ? "重启更新" : "Restart" }
+    public var restartAndUpdate: String { isChinese ? "重启并更新" : "Restart & Update" }
+    public var installingUpdate: String { isChinese ? "正在替换并重启…" : "Updating & relaunching…" }
     public var updateCheckFailed: String { isChinese ? "检查更新失败，请稍后重试" : "Update check failed" }
     public var updateDownloadFailed: String { isChinese ? "下载更新包失败，请重试" : "Download failed" }
     public var updateVerifyFailed: String { isChinese ? "更新包校验失败" : "Update package verification failed" }
@@ -411,6 +413,10 @@ public struct L10n: Sendable {
 
     public func newVersionBanner(_ version: String) -> String {
         isChinese ? "发现新版本 v\(version)" : "v\(version) available"
+    }
+
+    public func readyToInstallBanner(_ version: String) -> String {
+        isChinese ? "新版本 v\(version) 已就绪" : "v\(version) ready to install"
     }
 
     public func downloadingPercent(_ pct: Int) -> String {

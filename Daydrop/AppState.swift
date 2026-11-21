@@ -40,7 +40,7 @@ final class AppState: ObservableObject {
         }
         HolidayStore.shared.syncIfNeededOnLaunch()
         Task { @MainActor in
-            AppUpdater.shared.checkOnLaunchIfNeeded()
+            AppUpdater.shared.startBackgroundScheduler()
         }
     }
 

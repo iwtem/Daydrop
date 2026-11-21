@@ -15,7 +15,8 @@ public enum UpdateState: Equatable {
     case checking
     case upToDate
     case available(AppUpdateInfo)
-    case downloading(progress: Double)
+    case downloading(info: AppUpdateInfo, progress: Double)
+    case readyToInstall(AppUpdateInfo)
     case installing
     case failed(String)
 }
@@ -44,17 +45,29 @@ private struct GitHubReleaseResponse: Decodable {
     }
 }
 
+private struct StagedUpdatePackage {
+    let info: AppUpdateInfo
+    let stagedAppURL: URL
+    let workDirURL: URL
+}
+
 @MainActor
 public final class AppUpdater: ObservableObject {
     public static let shared = AppUpdater()
     public static let repoSlug = "iwtem/Daydrop"
+    private static let checkInterval: TimeInterval = 6 * 3600
 
     @Published public var state: UpdateState = .idle
     @Published public var availableUpdate: AppUpdateInfo?
     @Published public var dismissedVersionForSession: String?
 
+    private var stagedPackage: StagedUpdatePackage?
+    private var periodicTimer: Timer?
+    private var wakeObserver: NSObjectProtocol?
+    private var hasStartedScheduler = false
+
     public var currentVersion: String {
-        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.1.0"
+        (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.1.2"
     }
 
     public var shouldShowBanner: Bool {
@@ -63,6 +76,13 @@ public final class AppUpdater: ObservableObject {
     }
 
     private init() {}
+
+    deinit {
+        periodicTimer?.invalidate()
+        if let observer = wakeObserver {
+            NSWorkspace.shared.notificationCenter.removeObserver(observer)
+        }
+    }
 
     // MARK: - Version Parsing & Comparison (Pure & Testable)
 
@@ -105,18 +125,45 @@ public final class AppUpdater: ObservableObject {
         )
     }
 
-    // MARK: - Check for Updates
+    // MARK: - Background Scheduler (Launch + Periodic 6h + Wake from Sleep)
 
-    public func checkOnLaunchIfNeeded() {
+    public func startBackgroundScheduler() {
+        guard !hasStartedScheduler else { return }
+        hasStartedScheduler = true
+
+        checkIfDueInBackground()
+
+        // Periodic background check every 6 hours for long-running menu bar sessions
+        periodicTimer = Timer.scheduledTimer(withTimeInterval: Self.checkInterval, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.checkIfDueInBackground()
+            }
+        }
+
+        // Also check when Mac wakes from sleep (throttled to 6h interval)
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(
+            forName: NSWorkspace.didWakeNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            Task { @MainActor in
+                self?.checkIfDueInBackground()
+            }
+        }
+    }
+
+    private func checkIfDueInBackground() {
         guard AppPreferences.shared.autoCheckUpdates else { return }
         if let last = AppPreferences.shared.lastUpdateCheckDate,
-           Date().timeIntervalSince(last) < 6 * 3600 {
+           Date().timeIntervalSince(last) < Self.checkInterval {
             return
         }
         Task {
             await checkForUpdates(silent: true)
         }
     }
+
+    // MARK: - Check for Updates
 
     public func checkForUpdates(silent: Bool = false) async {
         if case .downloading = state { return }
@@ -153,14 +200,25 @@ public final class AppUpdater: ObservableObject {
 
             if Self.isVersion(release.version, newerThan: currentVersion) {
                 availableUpdate = release
-                state = .available(release)
+
+                // Already downloaded & verified this exact version? Stay ready to install!
+                if let staged = stagedPackage,
+                   staged.info.version == release.version,
+                   FileManager.default.fileExists(atPath: staged.stagedAppURL.path) {
+                    state = .readyToInstall(release)
+                    return
+                }
+
+                // Auto-download silently in background if enabled; otherwise wait for user click
+                if AppPreferences.shared.autoDownloadUpdates {
+                    await downloadAndStage(release, silentErrors: silent)
+                } else {
+                    state = .available(release)
+                }
             } else {
                 availableUpdate = nil
-                if !silent {
-                    state = .upToDate
-                } else {
-                    state = .idle
-                }
+                cleanupStagedPackage()
+                state = silent ? .idle : .upToDate
             }
         } catch {
             if !silent {
@@ -173,17 +231,27 @@ public final class AppUpdater: ObservableObject {
         dismissedVersionForSession = availableUpdate?.version
     }
 
-    // MARK: - Download, Extract, Atomic Replace & Relaunch
+    // MARK: - Step 1: Download, Extract & Verify (Staged Ready — Does NOT Auto-Quit)
 
-    public func installAvailableUpdate() {
+    public func startManualDownload() {
         guard let update = availableUpdate else { return }
+        if let staged = stagedPackage,
+           staged.info.version == update.version,
+           FileManager.default.fileExists(atPath: staged.stagedAppURL.path) {
+            state = .readyToInstall(update)
+            return
+        }
         Task {
-            await downloadAndInstall(update)
+            await downloadAndStage(update, silentErrors: false)
         }
     }
 
-    private func downloadAndInstall(_ update: AppUpdateInfo) async {
-        state = .downloading(progress: 0.02)
+    private func downloadAndStage(_ update: AppUpdateInfo, silentErrors: Bool) async {
+        if case .downloading = state { return }
+        if case .installing = state { return }
+
+        cleanupStagedPackage()
+        state = .downloading(info: update, progress: 0.02)
 
         let fm = FileManager.default
         let workDir = fm.temporaryDirectory.appendingPathComponent("DaydropUpdate-\(UUID().uuidString)", isDirectory: true)
@@ -193,7 +261,6 @@ public final class AppUpdater: ObservableObject {
         do {
             try fm.createDirectory(at: extractDir, withIntermediateDirectories: true)
 
-            // 1. Stream download with live progress
             var request = URLRequest(url: update.downloadURL)
             request.timeoutInterval = 120
             request.setValue("Daydrop/\(currentVersion)", forHTTPHeaderField: "User-Agent")
@@ -220,10 +287,10 @@ public final class AppUpdater: ObservableObject {
                     try handle.write(contentsOf: buffer)
                     buffer.removeAll(keepingCapacity: true)
                     if expectedLength > 0 {
-                        let p = min(0.99, Double(downloaded) / Double(expectedLength))
+                        let p = min(0.98, Double(downloaded) / Double(expectedLength))
                         if p - lastReportedProgress >= 0.02 {
                             lastReportedProgress = p
-                            state = .downloading(progress: p)
+                            state = .downloading(info: update, progress: p)
                         }
                     }
                 }
@@ -233,12 +300,10 @@ public final class AppUpdater: ObservableObject {
             }
             try handle.close()
 
-            state = .installing
-
-            // 2. Extract with macOS ditto (preserves bundle structure & code signatures)
+            // Extract using ditto (preserves macOS bundle structure & signatures)
             try runTool("/usr/bin/ditto", arguments: ["-x", "-k", zipURL.path, extractDir.path])
 
-            // 3. Locate and validate Daydrop.app
+            // Validate extracted Daydrop.app
             guard let stagedApp = findAppBundle(in: extractDir) else {
                 throw NSError(domain: "DaydropUpdater", code: 2, userInfo: [NSLocalizedDescriptionKey: L10n.current.updateVerifyFailed])
             }
@@ -249,36 +314,71 @@ public final class AppUpdater: ObservableObject {
                 throw NSError(domain: "DaydropUpdater", code: 3, userInfo: [NSLocalizedDescriptionKey: L10n.current.updateVerifyFailed])
             }
 
-            // Strip quarantine attribute from freshly downloaded bundle
+            // Strip quarantine attribute before user restarts
             _ = try? runTool("/usr/bin/xattr", arguments: ["-dr", "com.apple.quarantine", stagedApp.path])
 
-            // 4. Resolve install destination (replace current running .app if writable, else /Applications/Daydrop.app)
+            // Remove zip archive to save temp space while keeping extracted app ready
+            try? fm.removeItem(at: zipURL)
+
+            stagedPackage = StagedUpdatePackage(
+                info: update,
+                stagedAppURL: stagedApp,
+                workDirURL: workDir
+            )
+            state = .readyToInstall(update)
+        } catch {
+            try? fm.removeItem(at: workDir)
+            if silentErrors {
+                // Fall back gracefully to manual download prompt
+                state = .available(update)
+            } else {
+                state = .failed(error.localizedDescription)
+            }
+        }
+    }
+
+    // MARK: - Step 2: User-Initiated Restart & Atomic Replace
+
+    public func restartAndInstallReadyUpdate() {
+        guard let staged = stagedPackage,
+              FileManager.default.fileExists(atPath: staged.stagedAppURL.path) else {
+            // If temp package was purged by OS, re-download gracefully
+            startManualDownload()
+            return
+        }
+
+        state = .installing
+
+        do {
             let targetApp = resolveInstallTargetURL()
             let targetParent = targetApp.deletingLastPathComponent()
-            guard fm.isWritableFile(atPath: targetParent.path) else {
+            guard FileManager.default.isWritableFile(atPath: targetParent.path) else {
                 throw NSError(domain: "DaydropUpdater", code: 4, userInfo: [NSLocalizedDescriptionKey: L10n.current.updatePermissionFailed])
             }
 
-            // 5. Spawn detached shell script to wait for exit, swap atomically, re-register LaunchServices, and relaunch
             try launchAtomicSwapAndRelaunch(
-                stagedAppPath: stagedApp.path,
+                stagedAppPath: staged.stagedAppURL.path,
                 targetAppPath: targetApp.path,
-                workDirPath: workDir.path,
+                workDirPath: staged.workDirURL.path,
                 currentPID: ProcessInfo.processInfo.processIdentifier
             )
 
-            // 6. Quit current instance immediately so swap runs cleanly
             NSApplication.shared.terminate(nil)
         } catch {
-            try? fm.removeItem(at: workDir)
             state = .failed(error.localizedDescription)
+        }
+    }
+
+    private func cleanupStagedPackage() {
+        if let existing = stagedPackage {
+            try? FileManager.default.removeItem(at: existing.workDirURL)
+            stagedPackage = nil
         }
     }
 
     private func resolveInstallTargetURL() -> URL {
         let current = Bundle.main.bundleURL
         let path = current.path
-        // If running from AppTranslocation, DerivedData, or a read-only DMG volume, install into /Applications
         if path.contains("AppTranslocation") || path.hasPrefix("/Volumes/") || !FileManager.default.isWritableFile(atPath: current.deletingLastPathComponent().path) {
             return URL(fileURLWithPath: "/Applications/Daydrop.app")
         }
@@ -330,7 +430,6 @@ public final class AppUpdater: ObservableObject {
         BACKUP="$4"
         WORKDIR="$5"
 
-        # Wait up to 15 seconds for current app instance to exit
         COUNT=0
         while kill -0 "$PID" 2>/dev/null; do
           sleep 0.2
@@ -340,16 +439,13 @@ public final class AppUpdater: ObservableObject {
           fi
         done
 
-        # Backup existing bundle if present
         if [ -d "$TARGET" ]; then
           mv "$TARGET" "$BACKUP" || exit 1
         fi
 
-        # Move newly downloaded bundle into place
         if /usr/bin/ditto "$STAGED" "$TARGET"; then
           rm -rf "$BACKUP"
         else
-          # Rollback on failure
           if [ -d "$BACKUP" ]; then
             mv "$BACKUP" "$TARGET"
           fi
@@ -357,13 +453,8 @@ public final class AppUpdater: ObservableObject {
           exit 1
         fi
 
-        # Re-register bundle + WidgetKit extension with LaunchServices
         /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f -R "$TARGET" >/dev/null 2>&1 || true
-
-        # Relaunch updated app cleanly
         /usr/bin/open -n "$TARGET"
-
-        # Cleanup temp staging directory
         rm -rf "$WORKDIR"
         """
 
