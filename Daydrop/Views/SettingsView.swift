@@ -2,6 +2,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var preferences: AppPreferences
+    @ObservedObject private var updater = AppUpdater.shared
     @Environment(\.colorScheme) private var colorScheme
 
     @State private var isSyncingHolidays = false
@@ -102,6 +103,11 @@ struct SettingsView: View {
                         .disabled(isSyncingHolidays)
                     }
                 }
+
+                Section(l10n.sectionAppUpdate) {
+                    Toggle(l10n.labelAutoCheckUpdates, isOn: $preferences.autoCheckUpdates)
+                    appUpdateRow
+                }
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
@@ -121,10 +127,80 @@ struct SettingsView: View {
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
         }
-        .frame(width: 480, height: 590)
+        .frame(width: 480, height: 640)
         .background(DaydropTheme.cardBackground(colorScheme))
         .preferredColorScheme(preferences.appearanceMode.preferredColorScheme)
         .background(WindowConfigurator(isPinnedOnTop: false, title: l10n.settingsTitle, hideTitlebarSeparator: true))
+    }
+
+    @ViewBuilder
+    private var appUpdateRow: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(l10n.labelCurrentVersion)：v\(updater.currentVersion)")
+                        .font(.system(size: 12.5, weight: .medium))
+
+                    switch updater.state {
+                    case .upToDate:
+                        Text(l10n.appUpToDate)
+                            .font(.system(size: 11))
+                            .foregroundStyle(.secondary)
+                    case .available(let info):
+                        Text(l10n.newVersionBanner(info.version))
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(palette.todayAccent)
+                    case .downloading(let progress):
+                        Text(l10n.downloadingPercent(Int(progress * 100)))
+                            .font(.system(size: 11))
+                            .foregroundStyle(palette.todayAccent)
+                    case .installing:
+                        Text(l10n.installingUpdate)
+                            .font(.system(size: 11))
+                            .foregroundStyle(palette.todayAccent)
+                    case .failed(let message):
+                        Text(message)
+                            .font(.system(size: 11))
+                            .foregroundStyle(palette.primaryAccent)
+                    default:
+                        EmptyView()
+                    }
+                }
+
+                Spacer()
+
+                switch updater.state {
+                case .checking:
+                    HStack(spacing: 5) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text(l10n.checkingAppUpdate)
+                            .font(.system(size: 12))
+                            .foregroundStyle(.secondary)
+                    }
+                case .available:
+                    Button(l10n.updateAndRelaunch) {
+                        updater.installAvailableUpdate()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(palette.todayAccent)
+                case .downloading, .installing:
+                    ProgressView()
+                        .controlSize(.small)
+                default:
+                    Button(l10n.checkAppUpdate) {
+                        Task {
+                            await updater.checkForUpdates(silent: false)
+                        }
+                    }
+                }
+            }
+
+            if case .downloading(let progress) = updater.state {
+                ProgressView(value: progress)
+                    .tint(palette.todayAccent)
+            }
+        }
     }
 
     private var themeSwatchPicker: some View {

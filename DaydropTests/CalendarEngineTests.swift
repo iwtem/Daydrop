@@ -178,4 +178,31 @@ final class CalendarEngineTests: XCTestCase {
             XCTAssertFalse(en.themeName(theme).isEmpty)
         }
     }
+
+    func testAppUpdaterVersionComparisonAndParsing() {
+        XCTAssertTrue(AppUpdater.isVersion("1.1.0", newerThan: "1.0.0"))
+        XCTAssertTrue(AppUpdater.isVersion("v1.1.1", newerThan: "1.1.0"))
+        XCTAssertTrue(AppUpdater.isVersion("1.10.0", newerThan: "1.9.5"))
+        XCTAssertFalse(AppUpdater.isVersion("1.1.0", newerThan: "1.1.0"))
+        XCTAssertFalse(AppUpdater.isVersion("1.0.9", newerThan: "1.1.0"))
+
+        let sampleRelease = """
+        {
+          "tag_name": "v1.2.0",
+          "body": "Bug fixes and improvements",
+          "html_url": "https://github.com/iwtem/Daydrop/releases/tag/v1.2.0",
+          "assets": [
+            {
+              "name": "Daydrop-v1.2.0-macOS.zip",
+              "browser_download_url": "https://github.com/iwtem/Daydrop/releases/download/v1.2.0/Daydrop-v1.2.0-macOS.zip"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
+
+        let parsed = AppUpdater.parseLatestRelease(sampleRelease)
+        XCTAssertEqual(parsed?.version, "1.2.0")
+        XCTAssertEqual(parsed?.tagName, "v1.2.0")
+        XCTAssertEqual(parsed?.downloadURL.lastPathComponent, "Daydrop-v1.2.0-macOS.zip")
+    }
 }

@@ -17,6 +17,7 @@
 		8B29F8C4B9F5E39338F9AEE9 /* L10n.swift in AppSources */ = {isa = PBXBuildFile; fileRef = E5D6716FE0A50B9374DA95E0 /* L10n.swift */; };
 		E2A11BB7D83C63667F82C72B /* DaydropApp.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 97F7A34B017DDFB4140A869F /* DaydropApp.swift */; };
 		08CA59E912F15258FD8F3EF4 /* AppState.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 71961277645419B188815925 /* AppState.swift */; };
+		732E2E6F548E2BCC94814270 /* AppUpdater.swift in AppSources */ = {isa = PBXBuildFile; fileRef = E7D021DE99DAF968CFC9739C /* AppUpdater.swift */; };
 		E6E23F3DB2AFD9F7FDF8D6B5 /* WindowManager.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */; };
 		17320BF20BDC778AD994A6BE /* CalendarGridView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = B222C257A6E677EA301B9A16 /* CalendarGridView.swift */; };
 		F9BAD14AD055E6208DCB39E7 /* DayDetailBannerView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */; };
@@ -90,6 +91,7 @@
 		62FB9BC2B155F3081B2D34BB /* holidays_cn.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = "holidays_cn.json"; path = "Shared/HolidayData/holidays_cn.json"; sourceTree = SOURCE_ROOT; };
 		97F7A34B017DDFB4140A869F /* DaydropApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DaydropApp.swift"; path = "Daydrop/DaydropApp.swift"; sourceTree = SOURCE_ROOT; };
 		71961277645419B188815925 /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppState.swift"; path = "Daydrop/AppState.swift"; sourceTree = SOURCE_ROOT; };
+		E7D021DE99DAF968CFC9739C /* AppUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "AppUpdater.swift"; path = "Daydrop/Updater/AppUpdater.swift"; sourceTree = SOURCE_ROOT; };
 		7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "WindowManager.swift"; path = "Daydrop/Window/WindowManager.swift"; sourceTree = SOURCE_ROOT; };
 		B222C257A6E677EA301B9A16 /* CalendarGridView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "CalendarGridView.swift"; path = "Daydrop/Views/CalendarGridView.swift"; sourceTree = SOURCE_ROOT; };
 		CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "DayDetailBannerView.swift"; path = "Daydrop/Views/DayDetailBannerView.swift"; sourceTree = SOURCE_ROOT; };
@@ -175,6 +177,7 @@
 			children = (
 				97F7A34B017DDFB4140A869F /* DaydropApp.swift */,
 				71961277645419B188815925 /* AppState.swift */,
+				E7D021DE99DAF968CFC9739C /* AppUpdater.swift */,
 				7E9A3C9A544BC9D3B2A3EF0F /* WindowManager.swift */,
 				B222C257A6E677EA301B9A16 /* CalendarGridView.swift */,
 				CBB7B07E0EC85C598B57BA25 /* DayDetailBannerView.swift */,
@@ -361,6 +364,7 @@
 				8B29F8C4B9F5E39338F9AEE9 /* L10n.swift */,
 				E2A11BB7D83C63667F82C72B /* DaydropApp.swift */,
 				08CA59E912F15258FD8F3EF4 /* AppState.swift */,
+				732E2E6F548E2BCC94814270 /* AppUpdater.swift */,
 				E6E23F3DB2AFD9F7FDF8D6B5 /* WindowManager.swift */,
 				17320BF20BDC778AD994A6BE /* CalendarGridView.swift */,
 				F9BAD14AD055E6208DCB39E7 /* DayDetailBannerView.swift */,

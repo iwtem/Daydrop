@@ -56,7 +56,8 @@ public struct L10n: Sendable {
     public var windowTitle: String { isChinese ? "知时 · Daydrop" : "Daydrop" }
     public var settingsTitle: String { isChinese ? "知时 · 偏好设置" : "Daydrop Settings" }
     public var settingsSubtitle: String {
-        isChinese ? "轻如水滴的 macOS 原生极简日历 · v1.0" : "Minimalist native macOS calendar · v1.0"
+        let ver = (Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "1.1.0"
+        return isChinese ? "轻如水滴的 macOS 原生极简日历 · v\(ver)" : "Minimalist native macOS calendar · v\(ver)"
     }
     public var quit: String { isChinese ? "退出" : "Quit" }
     public var quitApp: String { isChinese ? "退出知时" : "Quit Daydrop" }
@@ -365,6 +366,31 @@ public struct L10n: Sendable {
     public var checkingHolidayUpdate: String { isChinese ? "正在同步…" : "Syncing…" }
     public var holidaySyncSuccess: String { isChinese ? "已同步最新节假日数据" : "Holiday data is up to date" }
     public var holidaySyncFailed: String { isChinese ? "网络暂不可用，继续使用内置离线数据" : "Offline — using built-in data" }
+
+    // Software Updates
+    public var sectionAppUpdate: String { isChinese ? "软件更新" : "Software Update" }
+    public var labelAutoCheckUpdates: String { isChinese ? "自动检查新版本" : "Check for Updates Automatically" }
+    public var labelCurrentVersion: String { isChinese ? "当前版本" : "Current Version" }
+    public var checkAppUpdate: String { isChinese ? "检查更新" : "Check for Updates" }
+    public var checkingAppUpdate: String { isChinese ? "正在检查…" : "Checking…" }
+    public var appUpToDate: String { isChinese ? "已是最新版本" : "You're up to date" }
+    public var updateNow: String { isChinese ? "立即更新" : "Update" }
+    public var updateAndRelaunch: String { isChinese ? "立即更新并重启" : "Update & Relaunch" }
+    public var installingUpdate: String { isChinese ? "正在安装并重启…" : "Installing & relaunching…" }
+    public var updateCheckFailed: String { isChinese ? "检查更新失败，请稍后重试" : "Update check failed" }
+    public var updateDownloadFailed: String { isChinese ? "下载更新包失败，请重试" : "Download failed" }
+    public var updateVerifyFailed: String { isChinese ? "更新包校验失败" : "Update package verification failed" }
+    public var updateInstallFailed: String { isChinese ? "解压更新包失败" : "Failed to unpack update" }
+    public var updatePermissionFailed: String { isChinese ? "没有写入应用目录的权限" : "No write permission to app folder" }
+
+    public func newVersionBanner(_ version: String) -> String {
+        isChinese ? "发现新版本 v\(version)" : "v\(version) available"
+    }
+
+    public func downloadingPercent(_ pct: Int) -> String {
+        isChinese ? "正在下载 \(pct)%" : "Downloading \(pct)%"
+    }
+
     public var settingsSyncHint: String {
         isChinese ? "更改偏好将自动同步至桌面小组件" : "Changes sync automatically to desktop widgets"
     }

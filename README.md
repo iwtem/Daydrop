@@ -13,12 +13,19 @@
   - **法定节假日与调休**：内置国务院官方放假与调休安排（2024–2027，已按国办发明电〔2026〕10号更新 2027 全年安排），并支持后台静默拉取 `holiday-cn` 静态源热更新未来年份，支持「休 / 班」角标与下一假期倒计时。
 - **5 套年轻亮色主题皮肤**：内置「蜜桃苏打 / 薄荷珊瑚 / 阳光柑橘 / 电光晴空 / 鸢尾莓粉」五套纯色扁平主题，主应用与桌面小组件实时联动切换。
 - **中英文双语**：默认跟随系统语言，同时支持在偏好设置中实时切换简体中文 / English，并自动同步至桌面小组件。
+- **应用内一键自动更新**：自动检测 GitHub Releases 新版本，点击「立即更新」即可后台下载、替换安装并自动重启，无需手动拖放覆盖。
 
 ## 快速运行
 
-1. 使用 Xcode 打开 [`Daydrop.xcodeproj`](Daydrop.xcodeproj)（要求 macOS 14.0+）。
-2. 选择 `Daydrop` scheme，按 `⌘R` 编译运行（默认已配置本地签名，无需开发者账号即可运行）。
+1. 前往 [Releases](https://github.com/iwtem/Daydrop/releases) 下载最新 `Daydrop-v*-macOS.zip`，解压后将 `Daydrop.app` 拖入 `/Applications` 并打开（要求 macOS 14.0+）；
+2. 或使用 Xcode 打开 [`Daydrop.xcodeproj`](Daydrop.xcodeproj)，选择 `Daydrop` scheme 按 `⌘R` 运行；
 3. 运行后顶部菜单栏会出现「知时」图标；在桌面空白处右键选择 **「编辑小组件」**，搜索 **「知时」** 或 **「Daydrop」** 即可添加桌面小组件。
+
+### 一键发版（开发者）
+
+```bash
+./scripts/release.sh 1.1.1 "本次更新说明"
+```
 
 ## 项目结构
 

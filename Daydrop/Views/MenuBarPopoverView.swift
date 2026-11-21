@@ -4,6 +4,7 @@ import AppKit
 struct MenuBarPopoverView: View {
     @ObservedObject var appState: AppState
     @ObservedObject var preferences: AppPreferences
+    @ObservedObject private var updater = AppUpdater.shared
 
     @Environment(\.openWindow) private var openWindow
     @Environment(\.dismiss) private var dismiss
@@ -40,6 +41,8 @@ struct MenuBarPopoverView: View {
                 l10n: l10n,
                 palette: palette
             )
+
+            updateBannerIfNeeded
         }
         .padding(14)
         .frame(width: 344)
@@ -151,6 +154,85 @@ struct MenuBarPopoverView: View {
                 .onHover { hovering in
                     isHoveringQuit = hovering
                 }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var updateBannerIfNeeded: some View {
+        switch updater.state {
+        case .downloading(let progress):
+            HStack(spacing: 8) {
+                ProgressView(value: progress)
+                    .tint(palette.todayAccent)
+                Text(l10n.downloadingPercent(Int(progress * 100)))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+            }
+            .padding(.horizontal, 11)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(palette.todayAccent.opacity(0.09))
+            )
+
+        case .installing:
+            HStack(spacing: 6) {
+                ProgressView()
+                    .controlSize(.small)
+                Text(l10n.installingUpdate)
+                    .font(.system(size: 11, weight: .medium))
+                    .foregroundStyle(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal, 11)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(palette.todayAccent.opacity(0.09))
+            )
+
+        default:
+            if updater.shouldShowBanner, let info = updater.availableUpdate {
+                HStack(spacing: 8) {
+                    Image(systemName: "arrow.down.circle.fill")
+                        .font(.system(size: 13))
+                        .foregroundStyle(palette.todayAccent)
+
+                    Text(l10n.newVersionBanner(info.version))
+                        .font(.system(size: 11.5, weight: .semibold, design: .rounded))
+                        .foregroundStyle(.primary)
+
+                    Spacer()
+
+                    Button {
+                        updater.installAvailableUpdate()
+                    } label: {
+                        Text(l10n.updateNow)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 9)
+                            .padding(.vertical, 3.5)
+                            .background(Capsule().fill(palette.todayAccent))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        updater.dismissBannerForSession()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 9.5, weight: .bold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .padding(.horizontal, 11)
+                .padding(.vertical, 8)
+                .background(
+                    RoundedRectangle(cornerRadius: 10, style: .continuous)
+                        .fill(palette.todayAccent.opacity(0.10))
+                )
             }
         }
     }

@@ -62,6 +62,8 @@ public final class AppPreferences: ObservableObject {
         static let appearanceMode = "appearanceMode"
         static let showHolidayBadges = "showHolidayBadges"
         static let showSolarTerms = "showSolarTerms"
+        static let autoCheckUpdates = "autoCheckUpdates"
+        static let lastUpdateCheckTimestamp = "lastUpdateCheckTimestamp"
         static let lastHolidaySyncTimestamp = "lastHolidaySyncTimestamp"
     }
 
@@ -110,6 +112,12 @@ public final class AppPreferences: ObservableObject {
         didSet {
             defaults.set(showSolarTerms, forKey: Keys.showSolarTerms)
             reloadWidgets()
+        }
+    }
+
+    @Published public var autoCheckUpdates: Bool {
+        didSet {
+            defaults.set(autoCheckUpdates, forKey: Keys.autoCheckUpdates)
         }
     }
 
@@ -186,6 +194,12 @@ public final class AppPreferences: ObservableObject {
         } else {
             self.showSolarTerms = store.bool(forKey: Keys.showSolarTerms)
         }
+
+        if store.object(forKey: Keys.autoCheckUpdates) == nil {
+            self.autoCheckUpdates = true
+        } else {
+            self.autoCheckUpdates = store.bool(forKey: Keys.autoCheckUpdates)
+        }
     }
 
     /// Snapshot readers for WidgetKit timelines without side effects.
@@ -205,6 +219,21 @@ public final class AppPreferences: ObservableObject {
             return parsed
         }
         return .peachSoda
+    }
+
+    public var lastUpdateCheckDate: Date? {
+        get {
+            let ts = defaults.double(forKey: Keys.lastUpdateCheckTimestamp)
+            return ts > 0 ? Date(timeIntervalSince1970: ts) : nil
+        }
+        set {
+            if let date = newValue {
+                defaults.set(date.timeIntervalSince1970, forKey: Keys.lastUpdateCheckTimestamp)
+            } else {
+                defaults.removeObject(forKey: Keys.lastUpdateCheckTimestamp)
+            }
+            defaults.synchronize()
+        }
     }
 
     public var lastHolidaySyncDate: Date? {

@@ -39,6 +39,9 @@ final class AppState: ObservableObject {
             self?.holidayRevision += 1
         }
         HolidayStore.shared.syncIfNeededOnLaunch()
+        Task { @MainActor in
+            AppUpdater.shared.checkOnLaunchIfNeeded()
+        }
     }
 
     deinit {
