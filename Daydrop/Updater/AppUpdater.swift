@@ -1,7 +1,6 @@
 import Foundation
 import AppKit
 import Combine
-import UserNotifications
 
 public struct AppUpdateInfo: Equatable, Sendable {
     public let version: String
@@ -77,6 +76,18 @@ public final class AppUpdater: ObservableObject {
     public var shouldShowBanner: Bool {
         guard let update = availableUpdate else { return false }
         return dismissedVersionForSession != update.version
+    }
+
+    /// Shows a quiet coral dot badge on the menu bar icon once an update is downloaded
+    /// and ready to install (or waiting for manual download when auto-download is off).
+    public var hasMenuBarUpdateBadge: Bool {
+        guard shouldShowBanner else { return false }
+        switch state {
+        case .readyToInstall, .available:
+            return true
+        default:
+            return false
+        }
     }
 
     private init() {}
@@ -384,7 +395,6 @@ public final class AppUpdater: ObservableObject {
                 workDirURL: workDir
             )
             state = .readyToInstall(update)
-            postUpdateReadyNotification(version: update.version)
         } catch {
             try? fm.removeItem(at: workDir)
             if silentErrors {
@@ -425,25 +435,6 @@ public final class AppUpdater: ObservableObject {
             NSApplication.shared.terminate(nil)
         } catch {
             state = .failed(error.localizedDescription)
-        }
-    }
-
-    private func postUpdateReadyNotification(version: String) {
-        guard Bundle.main.bundleURL.pathExtension == "app" else { return }
-        let center = UNUserNotificationCenter.current()
-        center.requestAuthorization(options: [.alert, .sound]) { granted, _ in
-            guard granted else { return }
-            let l10n = L10n.current
-            let content = UNMutableNotificationContent()
-            content.title = l10n.appBrandFooter
-            content.body = l10n.updateReadyNotificationBody(version)
-            content.sound = .default
-            let req = UNNotificationRequest(
-                identifier: "daydrop-update-ready-\(version)",
-                content: content,
-                trigger: nil
-            )
-            center.add(req)
         }
     }
 

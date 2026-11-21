@@ -163,7 +163,7 @@ func renderAppIcon(pixelSize: Int, to path: String) {
     try! data.write(to: URL(fileURLWithPath: path))
 }
 
-// Crisp Monochrome Menu Bar Template Icon (20pt = 20px @1x, 40px @2x, optical height ~17pt matching native macOS icons)
+// Crisp Monochrome Menu Bar Template Icon (20pt = 20px @1x, 40px @2x, slightly trimmer calendar proportions)
 func renderMenuBarIcon(pixelSize: Int, to path: String) {
     let rep = NSBitmapImageRep(
         bitmapDataPlanes: nil,
@@ -194,21 +194,21 @@ func renderMenuBarIcon(pixelSize: Int, to path: String) {
     ctx.setStrokeColor(black)
     ctx.setFillColor(black)
 
-    // Rounded calendar body outline (optical width 34px = 17pt, total height with tabs ~34px = 17pt)
-    let bodyRect = CGRect(x: 3.0, y: 7.0, width: 34.0, height: 29.5)
-    let bodyPath = CGPath(roundedRect: bodyRect, cornerWidth: 6.8, cornerHeight: 6.8, transform: nil)
+    // Rounded calendar body outline (slightly narrower: 30px = 15pt inner, ~16.5pt outer width)
+    let bodyRect = CGRect(x: 5.0, y: 7.0, width: 30.0, height: 29.5)
+    let bodyPath = CGPath(roundedRect: bodyRect, cornerWidth: 6.2, cornerHeight: 6.2, transform: nil)
     ctx.setLineWidth(3.0)
     ctx.addPath(bodyPath)
     ctx.strokePath()
 
     // Horizontal top divider line
     ctx.setLineWidth(2.6)
-    ctx.move(to: CGPoint(x: 3.5, y: 15.5))
-    ctx.addLine(to: CGPoint(x: 36.5, y: 15.5))
+    ctx.move(to: CGPoint(x: 5.5, y: 15.5))
+    ctx.addLine(to: CGPoint(x: 34.5, y: 15.5))
     ctx.strokePath()
 
     // Two top binding tabs
-    for cx in [12.8, 27.2] as [CGFloat] {
+    for cx in [13.8, 26.2] as [CGFloat] {
         let tabRect = CGRect(x: cx - 1.8, y: 2.8, width: 3.6, height: 7.6)
         let tabPath = CGPath(roundedRect: tabRect, cornerWidth: 1.8, cornerHeight: 1.8, transform: nil)
         ctx.addPath(tabPath)
@@ -216,12 +216,12 @@ func renderMenuBarIcon(pixelSize: Int, to path: String) {
     }
 
     // Minimalist 3 x 2 dot grid inside (Option 5 signature!)
-    let xs: [CGFloat] = [12.0, 20.0, 28.0]
+    let xs: [CGFloat] = [13.0, 20.0, 27.0]
     let ys: [CGFloat] = [22.2, 29.8]
     for (rIdx, cy) in ys.enumerated() {
         for (cIdx, cx) in xs.enumerated() {
             let isToday = (rIdx == 0 && cIdx == 1)
-            let radius: CGFloat = isToday ? 2.85 : 1.9
+            let radius: CGFloat = isToday ? 2.65 : 1.75
             ctx.fillEllipse(in: CGRect(x: cx - radius, y: cy - radius, width: radius * 2, height: radius * 2))
         }
     }

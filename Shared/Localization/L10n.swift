@@ -420,10 +420,6 @@ public struct L10n: Sendable {
         isChinese ? "新版本 v\(version) 已就绪" : "v\(version) ready to install"
     }
 
-    public func updateReadyNotificationBody(_ version: String) -> String {
-        isChinese ? "新版本 v\(version) 已下载完成，打开菜单栏即可重启更新。" : "v\(version) is downloaded and ready. Open Daydrop to restart & update."
-    }
-
     public func downloadingPercent(_ pct: Int) -> String {
         isChinese ? "正在下载 \(pct)%" : "Downloading \(pct)%"
     }

@@ -55,6 +55,7 @@ public enum DaydropTheme {
     public static let charcoal = Color(red: 0.137, green: 0.153, blue: 0.188)       // #232730
     public static let defaultWorkday = Color(red: 0.392, green: 0.455, blue: 0.545) // #64748B
     public static let emerald = Color(red: 0.063, green: 0.725, blue: 0.506)        // #10B981
+    public static let updateBadge = Color(red: 1.000, green: 0.384, blue: 0.302)    // #FF624D Menu-bar update dot
 
     public static func palette(for theme: AppTheme) -> ThemePalette {
         switch theme {

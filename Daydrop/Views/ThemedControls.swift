@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 /// Live vector rendition of the Option 5 Daydrop app icon that dynamically adapts to the active theme.
 struct ThemedAppIconView: View {
@@ -134,4 +135,40 @@ struct ThemedSegmentedControl<Option: Hashable>: View {
                 .fill(Color.primary.opacity(0.07))
         )
     }
+}
+
+/// Renders the menu bar calendar icon with a quiet coral dot badge at the top-right corner
+/// while dynamically adapting the base icon tint to macOS light and dark menu bars.
+enum MenuBarBadgedIcon {
+    static let badgedImage: NSImage = {
+        let size = NSSize(width: 20, height: 20)
+        let image = NSImage(size: size, flipped: false) { rect in
+            let isDark = NSAppearance.currentDrawing().bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            let iconTint: NSColor = isDark ? .white : .black
+
+            if let base = NSImage(named: "MenuBarIcon"),
+               let ctx = NSGraphicsContext.current?.cgContext {
+                ctx.saveGState()
+                ctx.beginTransparencyLayer(in: rect, auxiliaryInfo: nil)
+                base.draw(in: rect, from: .zero, operation: .sourceOver, fraction: 1.0)
+                iconTint.setFill()
+                rect.fill(using: .sourceIn)
+                ctx.endTransparencyLayer()
+                ctx.restoreGState()
+            }
+
+            let dotDiameter: CGFloat = 5.6
+            let dotRect = CGRect(
+                x: 16.5 - dotDiameter / 2,
+                y: 15.8 - dotDiameter / 2,
+                width: dotDiameter,
+                height: dotDiameter
+            )
+            NSColor(DaydropTheme.updateBadge).setFill()
+            NSBezierPath(ovalIn: dotRect).fill()
+            return true
+        }
+        image.isTemplate = false
+        return image
+    }()
 }

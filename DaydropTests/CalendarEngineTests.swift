@@ -275,4 +275,37 @@ final class CalendarEngineTests: XCTestCase {
         XCTAssertEqual(updatedSnap.showSolarTerms, true)
         XCTAssertFalse(AppState.currentAppBuildSignature().isEmpty)
     }
+
+    @MainActor
+    func testMenuBarUpdateBadgeState() {
+        let updater = AppUpdater.shared
+        let prevState = updater.state
+        let prevAvailable = updater.availableUpdate
+        let prevDismissed = updater.dismissedVersionForSession
+        defer {
+            updater.state = prevState
+            updater.availableUpdate = prevAvailable
+            updater.dismissedVersionForSession = prevDismissed
+        }
+
+        let sample = AppUpdateInfo(
+            version: "9.9.9",
+            tagName: "v9.9.9",
+            releaseNotes: "Test",
+            downloadURL: URL(string: "https://example.com/Daydrop.zip")!,
+            htmlURL: URL(string: "https://example.com/release")!
+        )
+
+        updater.dismissedVersionForSession = nil
+        updater.availableUpdate = sample
+
+        updater.state = .downloading(info: sample, progress: 0.5)
+        XCTAssertFalse(updater.hasMenuBarUpdateBadge)
+
+        updater.state = .readyToInstall(sample)
+        XCTAssertTrue(updater.hasMenuBarUpdateBadge)
+
+        updater.dismissBannerForSession()
+        XCTAssertFalse(updater.hasMenuBarUpdateBadge)
+    }
 }
