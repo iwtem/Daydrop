@@ -22,6 +22,15 @@ struct DayDetailBannerView: View {
                     .padding(.vertical, 1.5)
                     .background(Capsule().fill(Color.primary.opacity(0.06)))
 
+                Text(l10n.relativeDayLabel(from: today, to: dayInfo.date))
+                    .font(.system(size: 10.5, weight: .semibold))
+                    .foregroundStyle(dayInfo.isToday ? palette.todayAccent : .secondary)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 1.5)
+                    .background(
+                        Capsule().fill(dayInfo.isToday ? palette.todayAccent.opacity(0.12) : Color.primary.opacity(0.06))
+                    )
+
                 Spacer()
 
                 if let status = dayInfo.holidayStatus {

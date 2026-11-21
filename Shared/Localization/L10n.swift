@@ -198,6 +198,32 @@ public struct L10n: Sendable {
         isChinese ? "\(days)天后" : "in \(days)d"
     }
 
+    public func relativeDayLabel(from today: Date, to target: Date, calendar: Calendar = .current) -> String {
+        let startToday = calendar.startOfDay(for: today)
+        let startTarget = calendar.startOfDay(for: target)
+        let diff = calendar.dateComponents([.day], from: startToday, to: startTarget).day ?? 0
+
+        if isChinese {
+            switch diff {
+            case 0: return "今天"
+            case 1: return "明天"
+            case 2: return "后天"
+            case -1: return "昨天"
+            case -2: return "前天"
+            case let d where d > 2: return "\(d)天后"
+            default: return "\(-diff)天前"
+            }
+        } else {
+            switch diff {
+            case 0: return "Today"
+            case 1: return "Tomorrow"
+            case -1: return "Yesterday"
+            case let d where d > 1: return "In \(d)d"
+            default: return "\(-diff)d ago"
+            }
+        }
+    }
+
     public func nextSolarTermRow(_ termName: String) -> String {
         let name = solarTermName(termName, compact: false)
         return isChinese ? "下一个节气 · \(name)" : "Next Term · \(name)"

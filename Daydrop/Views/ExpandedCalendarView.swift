@@ -73,6 +73,10 @@ struct ExpandedCalendarView: View {
             }
             return .handled
         }
+        .onKeyPress(characters: CharacterSet(charactersIn: "tT")) { _ in
+            appState.goToToday()
+            return .handled
+        }
     }
 
     private var topToolbar: some View {
@@ -205,9 +209,20 @@ struct ExpandedCalendarView: View {
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.center)
 
-                    Text(l10n.weekOfYear(info.weekOfYear, compact: false))
-                        .font(.system(size: 11.5))
-                        .foregroundStyle(.secondary)
+                    HStack(spacing: 6) {
+                        Text(l10n.weekOfYear(info.weekOfYear, compact: false))
+                            .font(.system(size: 11.5))
+                            .foregroundStyle(.secondary)
+
+                        Text(l10n.relativeDayLabel(from: appState.today, to: info.date))
+                            .font(.system(size: 10.5, weight: .semibold))
+                            .foregroundStyle(info.isToday ? palette.todayAccent : .secondary)
+                            .padding(.horizontal, 7)
+                            .padding(.vertical, 2)
+                            .background(
+                                Capsule().fill(info.isToday ? palette.todayAccent.opacity(0.12) : Color.primary.opacity(0.06))
+                            )
+                    }
 
                     if !info.specialTags.isEmpty || info.holidayStatus != nil {
                         HStack(spacing: 6) {

@@ -74,6 +74,10 @@ struct MenuBarPopoverView: View {
             appState.moveSelection(byDays: 7)
             return .handled
         }
+        .onKeyPress(characters: CharacterSet(charactersIn: "tT")) { _ in
+            appState.goToToday()
+            return .handled
+        }
     }
 
     private var headerBar: some View {

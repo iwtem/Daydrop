@@ -205,4 +205,25 @@ final class CalendarEngineTests: XCTestCase {
         XCTAssertEqual(parsed?.tagName, "v1.2.0")
         XCTAssertEqual(parsed?.downloadURL.lastPathComponent, "Daydrop-v1.2.0-macOS.zip")
     }
+
+    func testRelativeDayLabel() {
+        let cal = Calendar(identifier: .gregorian)
+        let base = cal.date(from: DateComponents(year: 2026, month: 11, day: 20))!
+        let tomorrow = cal.date(byAdding: .day, value: 1, to: base)!
+        let inFiveDays = cal.date(byAdding: .day, value: 5, to: base)!
+        let threeDaysAgo = cal.date(byAdding: .day, value: -3, to: base)!
+
+        let zh = L10n(isChinese: true)
+        let en = L10n(isChinese: false)
+
+        XCTAssertEqual(zh.relativeDayLabel(from: base, to: base, calendar: cal), "今天")
+        XCTAssertEqual(zh.relativeDayLabel(from: base, to: tomorrow, calendar: cal), "明天")
+        XCTAssertEqual(zh.relativeDayLabel(from: base, to: inFiveDays, calendar: cal), "5天后")
+        XCTAssertEqual(zh.relativeDayLabel(from: base, to: threeDaysAgo, calendar: cal), "3天前")
+
+        XCTAssertEqual(en.relativeDayLabel(from: base, to: base, calendar: cal), "Today")
+        XCTAssertEqual(en.relativeDayLabel(from: base, to: tomorrow, calendar: cal), "Tomorrow")
+        XCTAssertEqual(en.relativeDayLabel(from: base, to: inFiveDays, calendar: cal), "In 5d")
+        XCTAssertEqual(en.relativeDayLabel(from: base, to: threeDaysAgo, calendar: cal), "3d ago")
+    }
 }
