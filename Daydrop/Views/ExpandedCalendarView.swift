@@ -8,8 +8,10 @@ struct ExpandedCalendarView: View {
     @State private var showMonthYearPicker = false
 
     private var l10n: L10n { L10n(language: preferences.language) }
+    private var palette: ThemePalette { DaydropTheme.palette(for: preferences.theme) }
 
     var body: some View {
+        let _ = appState.holidayRevision
         VStack(spacing: 0) {
             topToolbar
             Divider()
@@ -22,7 +24,8 @@ struct ExpandedCalendarView: View {
                     today: appState.today,
                     weekStartsOnMonday: preferences.weekStartsOnMonday,
                     showHolidayBadges: preferences.showHolidayBadges,
-                    l10n: l10n
+                    l10n: l10n,
+                    palette: palette
                 ) { month in
                     appState.jumpTo(year: appState.displayedYear, month: month)
                     appState.expandedViewMode = .month
@@ -72,11 +75,8 @@ struct ExpandedCalendarView: View {
         }
     }
 
-    // MARK: - Toolbar
-
     private var topToolbar: some View {
         HStack(spacing: 12) {
-            // Left: Date navigation
             HStack(spacing: 8) {
                 Button {
                     showMonthYearPicker.toggle()
@@ -98,7 +98,8 @@ struct ExpandedCalendarView: View {
                     MonthYearPickerPopover(
                         selectedYear: $appState.displayedYear,
                         selectedMonth: $appState.displayedMonth,
-                        l10n: l10n
+                        l10n: l10n,
+                        palette: palette
                     ) {
                         showMonthYearPicker = false
                     }
@@ -126,11 +127,11 @@ struct ExpandedCalendarView: View {
                 } label: {
                     Text(l10n.todayFull)
                         .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(DaydropTheme.skyBlue)
+                        .foregroundStyle(palette.todayAccent)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)
                         .background(
-                            Capsule().fill(DaydropTheme.skyBlue.opacity(0.12))
+                            Capsule().fill(palette.todayAccent.opacity(0.12))
                         )
                 }
                 .buttonStyle(.plain)
@@ -138,7 +139,6 @@ struct ExpandedCalendarView: View {
 
             Spacer()
 
-            // Right: Month / Year switcher
             Picker("", selection: $appState.expandedViewMode) {
                 Text(l10n.viewModeMonth).tag(ExpandedViewMode.month)
                 Text(l10n.viewModeYear).tag(ExpandedViewMode.year)
@@ -151,11 +151,8 @@ struct ExpandedCalendarView: View {
         .padding(.bottom, 14)
     }
 
-    // MARK: - Month View Split Content
-
     private var monthContent: some View {
         HStack(alignment: .top, spacing: 20) {
-            // Left: Spacious Month Calendar Grid
             CalendarGridView(
                 days: appState.currentMonthDays,
                 selectedDate: appState.selectedDate,
@@ -164,13 +161,13 @@ struct ExpandedCalendarView: View {
                 showHolidayBadges: preferences.showHolidayBadges,
                 showSolarTerms: preferences.showSolarTerms,
                 l10n: l10n,
+                palette: palette,
                 style: .spacious
             ) { day in
                 appState.selectDay(day)
             }
             .frame(maxWidth: .infinity)
 
-            // Right: Signature Tear-Off Detail Card
             rightDetailSidebar
                 .frame(width: 248)
         }
@@ -183,9 +180,7 @@ struct ExpandedCalendarView: View {
             .filter { $0.month == appState.displayedMonth }
 
         return VStack(spacing: 14) {
-            // Tear-off card echoing Peach Soda icon
             VStack(spacing: 0) {
-                // Coral header bar
                 HStack {
                     Text(l10n.yearMonthTitle(year: info.year, month: info.month))
                         .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -197,13 +192,12 @@ struct ExpandedCalendarView: View {
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(DaydropTheme.coral)
+                .background(palette.primaryAccent)
 
-                // Main date body
                 VStack(spacing: 8) {
                     Text("\(info.day)")
                         .font(.system(size: 56, weight: .bold, design: .rounded))
-                        .foregroundStyle(info.isToday ? DaydropTheme.skyBlue : .primary)
+                        .foregroundStyle(info.isToday ? palette.todayAccent : .primary)
                         .padding(.top, 8)
 
                     Text(l10n.lunarFullDescription(info.lunar))
@@ -215,19 +209,17 @@ struct ExpandedCalendarView: View {
                         .font(.system(size: 11.5))
                         .foregroundStyle(.secondary)
 
-                    // Special tags & holiday status
                     if !info.specialTags.isEmpty || info.holidayStatus != nil {
                         HStack(spacing: 6) {
                             ForEach(info.specialTags, id: \.self) { tag in
                                 let isTerm = (info.solarTerm?.name == tag)
+                                let tagColor = isTerm ? palette.solarTermAccent : palette.primaryAccent
                                 Text(l10n.localizedTag(tag, isSolarTerm: isTerm))
                                     .font(.system(size: 11, weight: .semibold))
-                                    .foregroundStyle(isTerm ? DaydropTheme.solarTermGreen : DaydropTheme.coral)
+                                    .foregroundStyle(tagColor)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
-                                    .background(
-                                        Capsule().fill((isTerm ? DaydropTheme.solarTermGreen : DaydropTheme.coral).opacity(0.14))
-                                    )
+                                    .background(Capsule().fill(tagColor.opacity(0.14)))
                             }
                             if let status = info.holidayStatus {
                                 let isOff: Bool = {
@@ -239,7 +231,7 @@ struct ExpandedCalendarView: View {
                                     .foregroundStyle(.white)
                                     .padding(.horizontal, 8)
                                     .padding(.vertical, 3)
-                                    .background(Capsule().fill(isOff ? DaydropTheme.coral : DaydropTheme.workdayBadge))
+                                    .background(Capsule().fill(isOff ? palette.primaryAccent : palette.workdayBadge))
                             }
                         }
                         .padding(.top, 4)
@@ -256,10 +248,8 @@ struct ExpandedCalendarView: View {
                     .strokeBorder(DaydropTheme.subtleBorder(colorScheme), lineWidth: 1)
             )
 
-            // Upcoming countdowns card
             upcomingCard
 
-            // Current month's solar terms
             if !monthTerms.isEmpty {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(l10n.solarTermsThisMonth)
@@ -268,7 +258,7 @@ struct ExpandedCalendarView: View {
                     ForEach(monthTerms) { term in
                         HStack {
                             Circle()
-                                .fill(DaydropTheme.solarTermGreen)
+                                .fill(palette.solarTermAccent)
                                 .frame(width: 6, height: 6)
                             Text(l10n.solarTermName(term.name, compact: false))
                                 .font(.system(size: 12.5, weight: .medium))
@@ -308,7 +298,7 @@ struct ExpandedCalendarView: View {
                 if let nextTerm {
                     HStack {
                         Circle()
-                            .fill(DaydropTheme.solarTermGreen)
+                            .fill(palette.solarTermAccent)
                             .frame(width: 7, height: 7)
                         Text(l10n.nextSolarTermRow(nextTerm.term.name))
                             .font(.system(size: 12))
@@ -316,14 +306,14 @@ struct ExpandedCalendarView: View {
                         Spacer()
                         Text(l10n.daysLater(nextTerm.daysUntil))
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(DaydropTheme.solarTermGreen)
+                            .foregroundStyle(palette.solarTermAccent)
                     }
                 }
 
                 if let nextHoliday {
                     HStack {
                         Circle()
-                            .fill(DaydropTheme.coral)
+                            .fill(palette.primaryAccent)
                             .frame(width: 7, height: 7)
                         Text(l10n.nextHolidayRow(nextHoliday.name))
                             .font(.system(size: 12))
@@ -331,7 +321,7 @@ struct ExpandedCalendarView: View {
                         Spacer()
                         Text(l10n.daysLater(nextHoliday.daysUntil))
                             .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundStyle(DaydropTheme.coral)
+                            .foregroundStyle(palette.primaryAccent)
                     }
                 }
             }

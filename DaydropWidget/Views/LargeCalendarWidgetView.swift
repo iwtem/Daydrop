@@ -8,6 +8,7 @@ struct LargeCalendarWidgetView: View {
 
     private var isFullColor: Bool { renderingMode == .fullColor }
     private var l10n: L10n { entry.l10n }
+    private var palette: ThemePalette { entry.palette }
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 7)
 
     var body: some View {
@@ -15,7 +16,6 @@ struct LargeCalendarWidgetView: View {
         let headers = l10n.weekdayHeaders(weekStartsOnMonday: entry.weekStartsOnMonday, singleLetter: false)
 
         VStack(spacing: 8) {
-            // Header banner (adapts cleanly for full-color & macOS vibrant/frosted glass mode)
             HStack(alignment: .center) {
                 HStack(spacing: 6) {
                     Text(l10n.yearMonthTitle(year: info.year, month: info.month))
@@ -36,23 +36,21 @@ struct LargeCalendarWidgetView: View {
             .padding(.vertical, 8)
             .background(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.14))
+                    .fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.14))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
                     .strokeBorder(isFullColor ? Color.clear : Color.primary.opacity(0.18), lineWidth: 0.75)
             )
 
-            // Weekday Row
             LazyVGrid(columns: columns, spacing: 3) {
                 ForEach(Array(headers.enumerated()), id: \.offset) { _, h in
                     Text(h.title)
                         .font(.system(size: 10.5, weight: .bold))
-                        .foregroundStyle(h.isWeekend && isFullColor ? DaydropTheme.coral : .secondary)
+                        .foregroundStyle(h.isWeekend && isFullColor ? palette.primaryAccent : .secondary)
                 }
             }
 
-            // Full 6x7 Month Grid with Lunar / Solar Terms / Badges
             LazyVGrid(columns: columns, spacing: 4) {
                 ForEach(entry.monthDays) { day in
                     let sub = l10n.localizedSubtitle(for: day, showSolarTerms: true)
@@ -98,12 +96,11 @@ struct LargeCalendarWidgetView: View {
 
             Spacer(minLength: 0)
 
-            // Bottom Countdown Footer
             HStack(spacing: 12) {
                 if let nextTerm = entry.nextSolarTerm {
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(isFullColor ? DaydropTheme.solarTermGreen : Color.primary.opacity(0.7))
+                            .fill(isFullColor ? palette.solarTermAccent : Color.primary.opacity(0.7))
                             .frame(width: 6, height: 6)
                         Text(l10n.countdownCompact(label: l10n.solarTermName(nextTerm.term.name, compact: true), days: nextTerm.daysUntil))
                             .font(.system(size: 10.5, weight: .medium))
@@ -113,7 +110,7 @@ struct LargeCalendarWidgetView: View {
                 if let nextHoliday = entry.nextHoliday {
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.7))
+                            .fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.7))
                             .frame(width: 6, height: 6)
                         Text(l10n.countdownCompact(label: l10n.holidayName(nextHoliday.name), days: nextHoliday.daysUntil))
                             .font(.system(size: 10.5, weight: .medium))
@@ -138,7 +135,7 @@ struct LargeCalendarWidgetView: View {
         }
         let alpha = day.isInCurrentMonth ? 1.0 : 0.35
         if isFullColor && (day.isOffDay || (day.isWeekend && !day.isAdjustedWorkday)) {
-            return DaydropTheme.coral.opacity(alpha)
+            return palette.primaryAccent.opacity(alpha)
         }
         return Color.primary.opacity(alpha)
     }
@@ -148,7 +145,7 @@ struct LargeCalendarWidgetView: View {
             if isToday { return .primary.opacity(0.88) }
             return Color.secondary.opacity(isInMonth ? 0.9 : 0.38)
         }
-        return DaydropTheme.subtitleColor(for: kind, isToday: isToday, isInMonth: isInMonth)
+        return palette.subtitleColor(for: kind, isToday: isToday, isInMonth: isInMonth)
     }
 
     private func badgeColor(isOff: Bool, isToday: Bool) -> Color {
@@ -156,15 +153,15 @@ struct LargeCalendarWidgetView: View {
             return .primary.opacity(0.85)
         }
         if isToday { return .white }
-        return isOff ? DaydropTheme.coral : DaydropTheme.workdayBadge
+        return isOff ? palette.primaryAccent : palette.workdayBadge
     }
 
     private func cellBackground(_ day: CalendarDayInfo) -> Color {
         if day.isToday {
-            return isFullColor ? DaydropTheme.skyBlue : Color.primary.opacity(0.18)
+            return isFullColor ? palette.todayAccent : Color.primary.opacity(0.18)
         }
         if entry.showHolidayBadges && day.isOffDay && day.isInCurrentMonth {
-            return isFullColor ? DaydropTheme.holidayCellTint(colorScheme) : Color.primary.opacity(0.10)
+            return isFullColor ? palette.holidayCellTint(colorScheme) : Color.primary.opacity(0.10)
         }
         return .clear
     }

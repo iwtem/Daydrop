@@ -8,14 +8,13 @@ struct MediumCalendarWidgetView: View {
 
     private var isFullColor: Bool { renderingMode == .fullColor }
     private var l10n: L10n { entry.l10n }
+    private var palette: ThemePalette { entry.palette }
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
 
     var body: some View {
         let info = entry.todayInfo
         HStack(spacing: 14) {
-            // Left: Balanced 3-tier Today Column with generous vertical breathing room
             VStack(alignment: .leading, spacing: 0) {
-                // Tier 1: Compact Month + Weekday pill
                 HStack(spacing: 4) {
                     Text(l10n.monthShort(info.month))
                         .font(.system(size: 10.5, weight: .bold, design: .rounded))
@@ -27,7 +26,7 @@ struct MediumCalendarWidgetView: View {
                 .padding(.horizontal, 8)
                 .padding(.vertical, 3.5)
                 .background(
-                    Capsule().fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.14))
+                    Capsule().fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.14))
                 )
                 .overlay(
                     Capsule().strokeBorder(isFullColor ? Color.clear : Color.primary.opacity(0.18), lineWidth: 0.75)
@@ -35,7 +34,6 @@ struct MediumCalendarWidgetView: View {
 
                 Spacer(minLength: 6)
 
-                // Tier 2: Horizontal Hero — Day numeral paired with Lunar metadata
                 HStack(alignment: .center, spacing: 8) {
                     Text("\(info.day)")
                         .font(.system(size: 38, weight: .bold, design: .rounded))
@@ -60,12 +58,11 @@ struct MediumCalendarWidgetView: View {
 
                 Spacer(minLength: 6)
 
-                // Tier 3: Clean compact countdowns (aligned with bottom row of right grid)
                 VStack(alignment: .leading, spacing: 3) {
                     if let nextTerm = entry.nextSolarTerm {
                         HStack(spacing: 5) {
                             Circle()
-                                .fill(isFullColor ? DaydropTheme.solarTermGreen : Color.primary.opacity(0.7))
+                                .fill(isFullColor ? palette.solarTermAccent : Color.primary.opacity(0.7))
                                 .frame(width: 5, height: 5)
                             Text(l10n.countdownTiny(label: l10n.solarTermName(nextTerm.term.name, compact: true), days: nextTerm.daysUntil))
                                 .font(.system(size: 10, weight: .medium))
@@ -77,7 +74,7 @@ struct MediumCalendarWidgetView: View {
                     if let nextHoliday = entry.nextHoliday {
                         HStack(spacing: 5) {
                             Circle()
-                                .fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.7))
+                                .fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.7))
                                 .frame(width: 5, height: 5)
                             Text(l10n.countdownTiny(label: l10n.holidayName(nextHoliday.name), days: nextHoliday.daysUntil))
                                 .font(.system(size: 10, weight: .medium))
@@ -90,20 +87,18 @@ struct MediumCalendarWidgetView: View {
             }
             .frame(width: 118, alignment: .leading)
 
-            // Subtle vertical hairline divider
             Rectangle()
                 .fill(Color.primary.opacity(0.06))
                 .frame(width: 1)
                 .padding(.vertical, 2)
 
-            // Right: Compact Month Grid
             VStack(spacing: 4) {
                 let headers = l10n.weekdayHeaders(weekStartsOnMonday: entry.weekStartsOnMonday, singleLetter: true)
                 LazyVGrid(columns: columns, spacing: 2) {
                     ForEach(Array(headers.enumerated()), id: \.offset) { _, h in
                         Text(h.title)
                             .font(.system(size: 9.5, weight: .bold))
-                            .foregroundStyle(h.isWeekend && isFullColor ? DaydropTheme.coral : .secondary)
+                            .foregroundStyle(h.isWeekend && isFullColor ? palette.primaryAccent : .secondary)
                     }
                 }
 
@@ -113,7 +108,7 @@ struct MediumCalendarWidgetView: View {
                             if day.isToday {
                                 if isFullColor {
                                     Circle()
-                                        .fill(DaydropTheme.skyBlue)
+                                        .fill(palette.todayAccent)
                                         .frame(width: 20, height: 20)
                                 } else {
                                     Circle()
@@ -126,7 +121,7 @@ struct MediumCalendarWidgetView: View {
                                 }
                             } else if entry.showHolidayBadges && day.isOffDay && day.isInCurrentMonth {
                                 Circle()
-                                    .fill(isFullColor ? DaydropTheme.coral.opacity(0.16) : Color.primary.opacity(0.10))
+                                    .fill(isFullColor ? palette.primaryAccent.opacity(0.16) : Color.primary.opacity(0.10))
                                     .frame(width: 20, height: 20)
                             }
 
@@ -154,10 +149,10 @@ struct MediumCalendarWidgetView: View {
         let alpha = day.isInCurrentMonth ? 1.0 : 0.35
         if isFullColor {
             if day.isOffDay || (day.isWeekend && !day.isAdjustedWorkday) {
-                return DaydropTheme.coral.opacity(alpha)
+                return palette.primaryAccent.opacity(alpha)
             }
             if day.solarTerm != nil {
-                return DaydropTheme.solarTermGreen.opacity(alpha)
+                return palette.solarTermAccent.opacity(alpha)
             }
         }
         return Color.primary.opacity(alpha)

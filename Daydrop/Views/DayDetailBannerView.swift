@@ -4,12 +4,12 @@ struct DayDetailBannerView: View {
     let dayInfo: CalendarDayInfo
     let today: Date
     let l10n: L10n
+    let palette: ThemePalette
 
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            // Primary line: Gregorian date + week number + holiday status
             HStack(alignment: .center, spacing: 6) {
                 Text("\(l10n.monthDayTitle(month: dayInfo.month, day: dayInfo.day)) \(l10n.weekdayShort(dayInfo.weekday))")
                     .font(.system(size: 13.5, weight: .semibold, design: .rounded))
@@ -29,7 +29,6 @@ struct DayDetailBannerView: View {
                 }
             }
 
-            // Lunar + special tags
             HStack(spacing: 6) {
                 Text(l10n.lunarFullDescription(dayInfo.lunar))
                     .font(.system(size: 12))
@@ -38,18 +37,16 @@ struct DayDetailBannerView: View {
 
                 ForEach(dayInfo.specialTags, id: \.self) { tag in
                     let isTerm = (dayInfo.solarTerm?.name == tag)
+                    let tagColor = isTerm ? palette.solarTermAccent : palette.primaryAccent
                     Text(l10n.localizedTag(tag, isSolarTerm: isTerm))
                         .font(.system(size: 10.5, weight: .semibold))
-                        .foregroundStyle(isTerm ? DaydropTheme.solarTermGreen : DaydropTheme.coral)
+                        .foregroundStyle(tagColor)
                         .padding(.horizontal, 6)
                         .padding(.vertical, 1.5)
-                        .background(
-                            Capsule().fill((isTerm ? DaydropTheme.solarTermGreen : DaydropTheme.coral).opacity(0.13))
-                        )
+                        .background(Capsule().fill(tagColor.opacity(0.13)))
                 }
             }
 
-            // Upcoming solar term & holiday countdowns
             countdownStrip
         }
         .padding(11)
@@ -73,7 +70,7 @@ struct DayDetailBannerView: View {
                 if let nextTerm {
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(DaydropTheme.solarTermGreen)
+                            .fill(palette.solarTermAccent)
                             .frame(width: 6, height: 6)
                         Text(l10n.countdownCompact(label: l10n.solarTermName(nextTerm.term.name, compact: true), days: nextTerm.daysUntil))
                             .font(.system(size: 11, weight: .medium))
@@ -83,7 +80,7 @@ struct DayDetailBannerView: View {
                 if let nextHoliday {
                     HStack(spacing: 4) {
                         Circle()
-                            .fill(DaydropTheme.coral)
+                            .fill(palette.primaryAccent)
                             .frame(width: 6, height: 6)
                         Text(l10n.countdownCompact(label: l10n.holidayName(nextHoliday.name), days: nextHoliday.daysUntil))
                             .font(.system(size: 11, weight: .medium))
@@ -107,6 +104,6 @@ struct DayDetailBannerView: View {
             .foregroundStyle(.white)
             .padding(.horizontal, 7)
             .padding(.vertical, 2)
-            .background(Capsule().fill(isOff ? DaydropTheme.coral : DaydropTheme.workdayBadge))
+            .background(Capsule().fill(isOff ? palette.primaryAccent : palette.workdayBadge))
     }
 }

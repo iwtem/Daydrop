@@ -56,16 +56,25 @@ public final class AppPreferences: ObservableObject {
 
     private enum Keys {
         static let language = "appLanguage"
+        static let theme = "appTheme"
         static let weekStartsOnMonday = "weekStartsOnMonday"
         static let menuBarDisplayStyle = "menuBarDisplayStyle"
         static let appearanceMode = "appearanceMode"
         static let showHolidayBadges = "showHolidayBadges"
         static let showSolarTerms = "showSolarTerms"
+        static let lastHolidaySyncTimestamp = "lastHolidaySyncTimestamp"
     }
 
     @Published public var language: AppLanguage {
         didSet {
             defaults.set(language.rawValue, forKey: Keys.language)
+            reloadWidgets()
+        }
+    }
+
+    @Published public var theme: AppTheme {
+        didSet {
+            defaults.set(theme.rawValue, forKey: Keys.theme)
             reloadWidgets()
         }
     }
@@ -139,6 +148,13 @@ public final class AppPreferences: ObservableObject {
             self.language = .system
         }
 
+        if let rawTheme = store.string(forKey: Keys.theme),
+           let parsedTheme = AppTheme(rawValue: rawTheme) {
+            self.theme = parsedTheme
+        } else {
+            self.theme = .peachSoda
+        }
+
         if store.object(forKey: Keys.weekStartsOnMonday) == nil {
             self.weekStartsOnMonday = true
         } else {
@@ -172,7 +188,7 @@ public final class AppPreferences: ObservableObject {
         }
     }
 
-    /// Snapshot reader for WidgetKit timelines without side effects.
+    /// Snapshot readers for WidgetKit timelines without side effects.
     public static func widgetLanguage() -> AppLanguage {
         let store = UserDefaults(suiteName: suiteName) ?? .standard
         if let raw = store.string(forKey: Keys.language),
@@ -180,6 +196,31 @@ public final class AppPreferences: ObservableObject {
             return parsed
         }
         return .system
+    }
+
+    public static func widgetTheme() -> AppTheme {
+        let store = UserDefaults(suiteName: suiteName) ?? .standard
+        if let raw = store.string(forKey: Keys.theme),
+           let parsed = AppTheme(rawValue: raw) {
+            return parsed
+        }
+        return .peachSoda
+    }
+
+    public var lastHolidaySyncDate: Date? {
+        get {
+            let ts = defaults.double(forKey: Keys.lastHolidaySyncTimestamp)
+            return ts > 0 ? Date(timeIntervalSince1970: ts) : nil
+        }
+        set {
+            objectWillChange.send()
+            if let date = newValue {
+                defaults.set(date.timeIntervalSince1970, forKey: Keys.lastHolidaySyncTimestamp)
+            } else {
+                defaults.removeObject(forKey: Keys.lastHolidaySyncTimestamp)
+            }
+            defaults.synchronize()
+        }
     }
 
     public static func widgetWeekStartsOnMonday() -> Bool {

@@ -13,8 +13,10 @@ struct MenuBarPopoverView: View {
     @State private var isHoveringQuit = false
 
     private var l10n: L10n { L10n(language: preferences.language) }
+    private var palette: ThemePalette { DaydropTheme.palette(for: preferences.theme) }
 
     var body: some View {
+        let _ = appState.holidayRevision
         VStack(spacing: 12) {
             headerBar
 
@@ -26,6 +28,7 @@ struct MenuBarPopoverView: View {
                 showHolidayBadges: preferences.showHolidayBadges,
                 showSolarTerms: preferences.showSolarTerms,
                 l10n: l10n,
+                palette: palette,
                 style: .compact
             ) { day in
                 appState.selectDay(day)
@@ -34,7 +37,8 @@ struct MenuBarPopoverView: View {
             DayDetailBannerView(
                 dayInfo: appState.selectedDayInfo,
                 today: appState.today,
-                l10n: l10n
+                l10n: l10n,
+                palette: palette
             )
         }
         .padding(14)
@@ -71,7 +75,6 @@ struct MenuBarPopoverView: View {
 
     private var headerBar: some View {
         HStack(spacing: 5) {
-            // Clickable Year & Month selector
             Button {
                 showMonthYearPicker.toggle()
             } label: {
@@ -88,7 +91,8 @@ struct MenuBarPopoverView: View {
                 MonthYearPickerPopover(
                     selectedYear: $appState.displayedYear,
                     selectedMonth: $appState.displayedMonth,
-                    l10n: l10n
+                    l10n: l10n,
+                    palette: palette
                 ) {
                     showMonthYearPicker = false
                 }
@@ -102,14 +106,13 @@ struct MenuBarPopoverView: View {
                         .font(.system(size: 11, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .frame(width: 22, height: 22)
-                        .background(Circle().fill(DaydropTheme.skyBlue))
+                        .background(Circle().fill(palette.todayAccent))
                 }
                 .buttonStyle(.plain)
             }
 
             Spacer()
 
-            // Month steppers
             HStack(spacing: 3) {
                 iconButton(systemName: "chevron.left") {
                     appState.shiftMonth(by: -1)
@@ -123,7 +126,6 @@ struct MenuBarPopoverView: View {
                 .frame(height: 14)
                 .padding(.horizontal, 2)
 
-            // Expand, Settings, Quit (all icon-only, no hover tooltips)
             HStack(spacing: 3) {
                 iconButton(systemName: "arrow.up.left.and.arrow.down.right") {
                     closePopoverAndOpenWindow(id: "expanded-calendar")
@@ -138,11 +140,11 @@ struct MenuBarPopoverView: View {
                 } label: {
                     Image(systemName: "power")
                         .font(.system(size: 11.5, weight: .semibold))
-                        .foregroundStyle(isHoveringQuit ? DaydropTheme.coral : .secondary)
+                        .foregroundStyle(isHoveringQuit ? palette.primaryAccent : .secondary)
                         .frame(width: 25, height: 25)
                         .background(
                             RoundedRectangle(cornerRadius: 7, style: .continuous)
-                                .fill(isHoveringQuit ? DaydropTheme.coral.opacity(0.14) : Color.primary.opacity(0.05))
+                                .fill(isHoveringQuit ? palette.primaryAccent.opacity(0.14) : Color.primary.opacity(0.05))
                         )
                 }
                 .buttonStyle(.plain)

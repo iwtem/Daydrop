@@ -16,8 +16,10 @@ final class AppState: ObservableObject {
     @Published var selectedDate: Date
     @Published var expandedViewMode: ExpandedViewMode = .month
     @Published var isPinnedOnTop: Bool = false
+    @Published var holidayRevision: Int = 0
 
     private var dayChangeObserver: NSObjectProtocol?
+    private var holidayUpdateObserver: NSObjectProtocol?
     private var midnightTimer: Timer?
 
     init() {
@@ -29,10 +31,21 @@ final class AppState: ObservableObject {
         self.displayedMonth = cal.component(.month, from: now)
 
         setupDayRolloverTracking()
+        holidayUpdateObserver = NotificationCenter.default.addObserver(
+            forName: .daydropHolidaysDidUpdate,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.holidayRevision += 1
+        }
+        HolidayStore.shared.syncIfNeededOnLaunch()
     }
 
     deinit {
         if let observer = dayChangeObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
+        if let observer = holidayUpdateObserver {
             NotificationCenter.default.removeObserver(observer)
         }
         midnightTimer?.invalidate()

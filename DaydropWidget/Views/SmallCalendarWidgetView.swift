@@ -8,11 +8,11 @@ struct SmallCalendarWidgetView: View {
 
     private var isFullColor: Bool { renderingMode == .fullColor }
     private var l10n: L10n { entry.l10n }
+    private var palette: ThemePalette { entry.palette }
 
     var body: some View {
         let info = entry.todayInfo
         VStack(spacing: 0) {
-            // Signature Header Bar (adapts cleanly for full-color & macOS vibrant/frosted glass mode)
             HStack {
                 Text(l10n.monthShort(info.month))
                     .font(.system(size: 12, weight: .bold, design: .rounded))
@@ -26,7 +26,7 @@ struct SmallCalendarWidgetView: View {
             .padding(.vertical, 7)
             .background(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.14))
+                    .fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.14))
             )
             .overlay(
                 RoundedRectangle(cornerRadius: 8, style: .continuous)
@@ -35,13 +35,11 @@ struct SmallCalendarWidgetView: View {
 
             Spacer(minLength: 4)
 
-            // Bold Today Numeral
             Text("\(info.day)")
                 .font(.system(size: 46, weight: .bold, design: .rounded))
                 .foregroundStyle(.primary)
                 .minimumScaleFactor(0.75)
 
-            // Lunar Month & Day
             Text(l10n.lunarMonthDay(info.lunar))
                 .font(.system(size: 11.5, weight: .semibold))
                 .foregroundStyle(.secondary)
@@ -50,7 +48,6 @@ struct SmallCalendarWidgetView: View {
 
             Spacer(minLength: 4)
 
-            // Bottom contextual pill: today's festival/term OR next countdown
             bottomTag(info)
         }
         .padding(15)
@@ -63,7 +60,7 @@ struct SmallCalendarWidgetView: View {
     private func bottomTag(_ info: CalendarDayInfo) -> some View {
         if let firstTag = info.specialTags.first {
             let isTerm = (info.solarTerm?.name == firstTag)
-            let accent = isTerm ? DaydropTheme.solarTermGreen : DaydropTheme.coral
+            let accent = isTerm ? palette.solarTermAccent : palette.primaryAccent
             Text(l10n.localizedTag(firstTag, isSolarTerm: isTerm))
                 .font(.system(size: 10.5, weight: .bold))
                 .foregroundStyle(isFullColor ? accent : .primary)
@@ -77,7 +74,7 @@ struct SmallCalendarWidgetView: View {
         } else if let nextTerm = entry.nextSolarTerm, nextTerm.daysUntil <= 15 {
             HStack(spacing: 4) {
                 Circle()
-                    .fill(isFullColor ? DaydropTheme.solarTermGreen : Color.primary.opacity(0.7))
+                    .fill(isFullColor ? palette.solarTermAccent : Color.primary.opacity(0.7))
                     .frame(width: 5, height: 5)
                 Text(l10n.countdownCompact(label: l10n.solarTermName(nextTerm.term.name, compact: true), days: nextTerm.daysUntil))
                     .font(.system(size: 10.5, weight: .medium))
@@ -88,7 +85,7 @@ struct SmallCalendarWidgetView: View {
         } else if let nextHoliday = entry.nextHoliday {
             HStack(spacing: 4) {
                 Circle()
-                    .fill(isFullColor ? DaydropTheme.coral : Color.primary.opacity(0.7))
+                    .fill(isFullColor ? palette.primaryAccent : Color.primary.opacity(0.7))
                     .frame(width: 5, height: 5)
                 Text(l10n.countdownCompact(label: l10n.holidayName(nextHoliday.name), days: nextHoliday.daysUntil))
                     .font(.system(size: 10.5, weight: .medium))

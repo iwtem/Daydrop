@@ -8,6 +8,7 @@ struct DaydropCalendarEntry: TimelineEntry {
     let weekStartsOnMonday: Bool
     let showHolidayBadges: Bool
     let l10n: L10n
+    let palette: ThemePalette
     let nextSolarTerm: (term: SolarTerm, daysUntil: Int)?
     let nextHoliday: UpcomingHoliday?
 }
@@ -36,11 +37,15 @@ struct DaydropTimelineProvider: TimelineProvider {
     }
 
     private func makeEntry(for date: Date) -> DaydropCalendarEntry {
+        // Reload any newly synced holiday data from shared preferences
+        HolidayStore.shared.reloadFromStorage()
+
         let cal = Calendar.current
         let year = cal.component(.year, from: date)
         let month = cal.component(.month, from: date)
         let weekStartsOnMonday = AppPreferences.widgetWeekStartsOnMonday()
         let showHolidayBadges = AppPreferences.widgetShowHolidayBadges()
+        let palette = DaydropTheme.palette(for: AppPreferences.widgetTheme())
 
         let todayInfo = MonthGridGenerator.dayInfo(for: date, inCurrentMonth: true, today: date, calendar: cal)
         let monthDays = MonthGridGenerator.generateMonthGrid(
@@ -58,6 +63,7 @@ struct DaydropTimelineProvider: TimelineProvider {
             weekStartsOnMonday: weekStartsOnMonday,
             showHolidayBadges: showHolidayBadges,
             l10n: L10n.widgetCurrent,
+            palette: palette,
             nextSolarTerm: SolarTermCalculator.shared.nextSolarTerm(from: date, calendar: cal),
             nextHoliday: HolidayStore.shared.nextHoliday(from: date, calendar: cal)
         )

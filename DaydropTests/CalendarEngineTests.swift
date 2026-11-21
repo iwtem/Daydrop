@@ -148,4 +148,34 @@ final class CalendarEngineTests: XCTestCase {
         XCTAssertEqual(sharedDefaults?.string(forKey: "_testSharedSync"), "zh-Hans")
         sharedDefaults?.removeObject(forKey: "_testSharedSync")
     }
+
+    func testRemoteHolidayJSONParsingAndThemes() {
+        // Test NateScarlet/holiday-cn format
+        let sampleCN = """
+        {
+          "year": 2028,
+          "days": [
+            { "name": "元旦", "date": "2028-01-01", "isOffDay": true },
+            { "name": "春节", "date": "2028-01-22", "isOffDay": false }
+          ]
+        }
+        """.data(using: .utf8)!
+
+        let parsed = HolidayStore.parseRemoteHolidayJSON(sampleCN)
+        XCTAssertEqual(parsed?.count, 2)
+        XCTAssertEqual(parsed?.first?.date, "2028-01-01")
+        XCTAssertEqual(parsed?.first?.isOffDay, true)
+        XCTAssertEqual(parsed?.last?.isOffDay, false)
+
+        // Verify all 5 themes instantiate cleanly with bilingual names
+        let zh = L10n(isChinese: true)
+        let en = L10n(isChinese: false)
+        XCTAssertEqual(AppTheme.allCases.count, 5)
+        for theme in AppTheme.allCases {
+            let p = DaydropTheme.palette(for: theme)
+            XCTAssertEqual(p.theme, theme)
+            XCTAssertFalse(zh.themeName(theme).isEmpty)
+            XCTAssertFalse(en.themeName(theme).isEmpty)
+        }
+    }
 }

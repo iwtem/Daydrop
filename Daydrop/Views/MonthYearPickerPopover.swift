@@ -4,6 +4,7 @@ struct MonthYearPickerPopover: View {
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     let l10n: L10n
+    let palette: ThemePalette
     let onDismiss: () -> Void
 
     private let monthColumns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 4)
@@ -55,7 +56,7 @@ struct MonthYearPickerPopover: View {
                             .frame(height: 30)
                             .background(
                                 RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(isActive ? DaydropTheme.skyBlue : Color.primary.opacity(0.05))
+                                    .fill(isActive ? palette.todayAccent : Color.primary.opacity(0.05))
                             )
                     }
                     .buttonStyle(.plain)

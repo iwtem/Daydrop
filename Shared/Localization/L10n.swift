@@ -358,8 +358,25 @@ public struct L10n: Sendable {
     public var sunday: String { isChinese ? "周日" : "Sunday" }
     public var labelShowHolidays: String { isChinese ? "显示法定节假日与调休角标（休 / 班）" : "Show Holiday & Workday Badges" }
     public var labelShowSolarTerms: String { isChinese ? "显示二十四节气" : "Show 24 Solar Terms" }
+    public var labelTheme: String { isChinese ? "主题配色" : "Theme" }
+    public var sectionHolidayData: String { isChinese ? "节假日数据" : "Holiday Data" }
+    public var labelCoveredYears: String { isChinese ? "已覆盖年份" : "Covered Years" }
+    public var checkHolidayUpdate: String { isChinese ? "检查更新" : "Check Updates" }
+    public var checkingHolidayUpdate: String { isChinese ? "正在同步…" : "Syncing…" }
+    public var holidaySyncSuccess: String { isChinese ? "已同步最新节假日数据" : "Holiday data is up to date" }
+    public var holidaySyncFailed: String { isChinese ? "网络暂不可用，继续使用内置离线数据" : "Offline — using built-in data" }
     public var settingsSyncHint: String {
         isChinese ? "更改偏好将自动同步至桌面小组件" : "Changes sync automatically to desktop widgets"
+    }
+
+    public func themeName(_ theme: AppTheme) -> String {
+        switch theme {
+        case .peachSoda: return isChinese ? "蜜桃苏打" : "Peach Soda"
+        case .mintCoral: return isChinese ? "薄荷珊瑚" : "Mint Coral"
+        case .sunnyCitrus: return isChinese ? "阳光柑橘" : "Sunny Citrus"
+        case .electricSky: return isChinese ? "电光晴空" : "Electric Sky"
+        case .irisBerry: return isChinese ? "鸢尾莓粉" : "Iris Berry"
+        }
     }
 
     public func menuBarStyleName(_ style: MenuBarDisplayStyle) -> String {

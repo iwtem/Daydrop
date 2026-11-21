@@ -13,6 +13,7 @@ struct CalendarGridView: View {
     let showHolidayBadges: Bool
     let showSolarTerms: Bool
     let l10n: L10n
+    let palette: ThemePalette
     let style: CalendarGridStyle
     let onSelect: (CalendarDayInfo) -> Void
 
@@ -38,7 +39,7 @@ struct CalendarGridView: View {
             ForEach(Array(headers.enumerated()), id: \.offset) { _, item in
                 Text(item.title)
                     .font(.system(size: style == .compact ? 11 : 12, weight: .semibold, design: .rounded))
-                    .foregroundStyle(item.isWeekend ? DaydropTheme.coral : Color.secondary)
+                    .foregroundStyle(item.isWeekend ? palette.primaryAccent : Color.secondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 2)
             }
@@ -48,7 +49,7 @@ struct CalendarGridView: View {
     private func dayCell(_ day: CalendarDayInfo) -> some View {
         let isSelected = Calendar.current.isDate(day.date, inSameDayAs: selectedDate)
         let isHovered = hoveredDayID == day.id
-        let subtitle = resolvedSubtitle(for: day)
+        let subtitle = l10n.localizedSubtitle(for: day, showSolarTerms: showSolarTerms)
 
         return Button {
             onSelect(day)
@@ -71,7 +72,7 @@ struct CalendarGridView: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
                         .foregroundStyle(
-                            DaydropTheme.subtitleColor(
+                            palette.subtitleColor(
                                 for: subtitle.kind,
                                 isToday: day.isToday,
                                 isInMonth: day.isInCurrentMonth
@@ -92,7 +93,7 @@ struct CalendarGridView: View {
             .overlay(
                 RoundedRectangle(cornerRadius: style == .compact ? 9 : 11, style: .continuous)
                     .strokeBorder(
-                        isSelected && !day.isToday ? DaydropTheme.skyBlue : Color.clear,
+                        isSelected && !day.isToday ? palette.todayAccent : Color.clear,
                         lineWidth: 1.5
                     )
             )
@@ -104,17 +105,13 @@ struct CalendarGridView: View {
         }
     }
 
-    private func resolvedSubtitle(for day: CalendarDayInfo) -> (text: String, kind: DaySubtitleKind) {
-        l10n.localizedSubtitle(for: day, showSolarTerms: showSolarTerms)
-    }
-
     private func dayNumberColor(for day: CalendarDayInfo) -> Color {
         if day.isToday {
             return .white
         }
         let alpha = day.isInCurrentMonth ? 1.0 : 0.34
         if day.isOffDay || (day.isWeekend && !day.isAdjustedWorkday) {
-            return DaydropTheme.coral.opacity(alpha)
+            return palette.primaryAccent.opacity(alpha)
         }
         return Color.primary.opacity(alpha)
     }
@@ -125,16 +122,16 @@ struct CalendarGridView: View {
         let isSameDayInOtherMonth = !day.isToday && day.isInCurrentMonth && day.day == todayDayOfMonth
         if day.isToday {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .fill(DaydropTheme.skyBlue)
+                .fill(palette.todayAccent)
         } else if isSelected {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .fill(DaydropTheme.selectedCellTint(colorScheme))
+                .fill(palette.selectedCellTint(colorScheme))
         } else if isSameDayInOtherMonth {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .fill(isHovered ? DaydropTheme.selectedCellTint(colorScheme) : DaydropTheme.sameDayOfMonthTint(colorScheme))
+                .fill(isHovered ? palette.selectedCellTint(colorScheme) : palette.sameDayOfMonthTint(colorScheme))
         } else if showHolidayBadges && day.isOffDay && day.isInCurrentMonth {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
-                .fill(isHovered ? DaydropTheme.coral.opacity(0.20) : DaydropTheme.holidayCellTint(colorScheme))
+                .fill(isHovered ? palette.primaryAccent.opacity(0.20) : palette.holidayCellTint(colorScheme))
         } else if isHovered {
             RoundedRectangle(cornerRadius: radius, style: .continuous)
                 .fill(DaydropTheme.hoverCellTint(colorScheme))
@@ -154,7 +151,7 @@ struct CalendarGridView: View {
 
         return Text(text)
             .font(.system(size: style == .compact ? (l10n.isChinese ? 8 : 7) : (l10n.isChinese ? 9 : 8), weight: .bold))
-            .foregroundStyle(isToday ? .white : (isOff ? DaydropTheme.coral.opacity(opacity) : DaydropTheme.workdayBadge.opacity(opacity)))
+            .foregroundStyle(isToday ? .white : (isOff ? palette.primaryAccent.opacity(opacity) : palette.workdayBadge.opacity(opacity)))
             .padding(.horizontal, 2.5)
             .padding(.vertical, 0.5)
             .background(
@@ -162,7 +159,7 @@ struct CalendarGridView: View {
                     .fill(
                         isToday
                             ? Color.white.opacity(0.25)
-                            : (isOff ? DaydropTheme.coral.opacity(0.14 * opacity) : DaydropTheme.workdayBadge.opacity(0.14 * opacity))
+                            : (isOff ? palette.primaryAccent.opacity(0.14 * opacity) : palette.workdayBadge.opacity(0.14 * opacity))
                     )
             )
     }
