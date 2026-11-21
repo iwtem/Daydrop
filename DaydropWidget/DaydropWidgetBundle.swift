@@ -20,7 +20,7 @@ struct DaydropWidgetEntryView: View {
 }
 
 struct DaydropCalendarWidget: Widget {
-    let kind: String = "DaydropCalendarWidget"
+    let kind: String = AppPreferences.widgetKind
 
     var body: some WidgetConfiguration {
         let l10n = L10n.widgetCurrent

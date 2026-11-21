@@ -7,6 +7,7 @@ struct DaydropCalendarEntry: TimelineEntry {
     let monthDays: [CalendarDayInfo]
     let weekStartsOnMonday: Bool
     let showHolidayBadges: Bool
+    let showSolarTerms: Bool
     let l10n: L10n
     let palette: ThemePalette
     let nextSolarTerm: (term: SolarTerm, daysUntil: Int)?
@@ -37,21 +38,21 @@ struct DaydropTimelineProvider: TimelineProvider {
     }
 
     private func makeEntry(for date: Date) -> DaydropCalendarEntry {
-        // Reload any newly synced holiday data from shared preferences
+        // Reload any newly synced holiday data & preferences from shared suite
         HolidayStore.shared.reloadFromStorage()
+        let prefs = AppPreferences.widgetSnapshot()
 
         let cal = Calendar.current
         let year = cal.component(.year, from: date)
         let month = cal.component(.month, from: date)
-        let weekStartsOnMonday = AppPreferences.widgetWeekStartsOnMonday()
-        let showHolidayBadges = AppPreferences.widgetShowHolidayBadges()
-        let palette = DaydropTheme.palette(for: AppPreferences.widgetTheme())
+        let palette = DaydropTheme.palette(for: prefs.theme)
+        let l10n = L10n(language: prefs.language)
 
         let todayInfo = MonthGridGenerator.dayInfo(for: date, inCurrentMonth: true, today: date, calendar: cal)
         let monthDays = MonthGridGenerator.generateMonthGrid(
             year: year,
             month: month,
-            weekStartsOnMonday: weekStartsOnMonday,
+            weekStartsOnMonday: prefs.weekStartsOnMonday,
             today: date,
             calendar: cal
         )
@@ -60,11 +61,12 @@ struct DaydropTimelineProvider: TimelineProvider {
             date: date,
             todayInfo: todayInfo,
             monthDays: monthDays,
-            weekStartsOnMonday: weekStartsOnMonday,
-            showHolidayBadges: showHolidayBadges,
-            l10n: L10n.widgetCurrent,
+            weekStartsOnMonday: prefs.weekStartsOnMonday,
+            showHolidayBadges: prefs.showHolidayBadges,
+            showSolarTerms: prefs.showSolarTerms,
+            l10n: l10n,
             palette: palette,
-            nextSolarTerm: SolarTermCalculator.shared.nextSolarTerm(from: date, calendar: cal),
+            nextSolarTerm: prefs.showSolarTerms ? SolarTermCalculator.shared.nextSolarTerm(from: date, calendar: cal) : nil,
             nextHoliday: HolidayStore.shared.nextHoliday(from: date, calendar: cal)
         )
     }

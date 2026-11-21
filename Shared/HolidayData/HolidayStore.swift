@@ -75,6 +75,7 @@ public final class HolidayStore: @unchecked Sendable {
         }
 
         // 2. Overlay cached online updates from shared preferences (synced to both App & Widget)
+        CFPreferencesAppSynchronize(Self.sharedSuite as CFString)
         let store = UserDefaults(suiteName: Self.sharedSuite) ?? .standard
         if let cachedData = store.data(forKey: Self.cacheKey),
            let cachedEntries = try? JSONDecoder().decode([HolidayEntry].self, from: cachedData) {
@@ -171,7 +172,7 @@ public final class HolidayStore: @unchecked Sendable {
         }
 
         reloadFromStorage()
-        WidgetCenter.shared.reloadAllTimelines()
+        AppPreferences.reloadAllWidgets()
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: .daydropHolidaysDidUpdate, object: nil)
         }

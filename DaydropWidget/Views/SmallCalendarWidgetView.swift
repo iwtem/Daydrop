@@ -58,7 +58,11 @@ struct SmallCalendarWidgetView: View {
 
     @ViewBuilder
     private func bottomTag(_ info: CalendarDayInfo) -> some View {
-        if let firstTag = info.specialTags.first {
+        let visibleTags = entry.showSolarTerms
+            ? info.specialTags
+            : info.specialTags.filter { $0 != info.solarTerm?.name }
+
+        if let firstTag = visibleTags.first {
             let isTerm = (info.solarTerm?.name == firstTag)
             let accent = isTerm ? palette.solarTermAccent : palette.primaryAccent
             Text(l10n.localizedTag(firstTag, isSolarTerm: isTerm))

@@ -53,7 +53,7 @@ struct LargeCalendarWidgetView: View {
 
             LazyVGrid(columns: columns, spacing: 4) {
                 ForEach(entry.monthDays) { day in
-                    let sub = l10n.localizedSubtitle(for: day, showSolarTerms: true)
+                    let sub = l10n.localizedSubtitle(for: day, showSolarTerms: entry.showSolarTerms)
                     ZStack(alignment: .topTrailing) {
                         VStack(spacing: 1) {
                             Text("\(day.day)")

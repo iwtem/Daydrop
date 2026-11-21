@@ -151,7 +151,7 @@ struct MediumCalendarWidgetView: View {
             if day.isOffDay || (day.isWeekend && !day.isAdjustedWorkday) {
                 return palette.primaryAccent.opacity(alpha)
             }
-            if day.solarTerm != nil {
+            if entry.showSolarTerms && day.solarTerm != nil {
                 return palette.solarTermAccent.opacity(alpha)
             }
         }

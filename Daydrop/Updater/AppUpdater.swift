@@ -517,6 +517,10 @@ public final class AppUpdater: ObservableObject {
           fi
         done
 
+        # Stop any resident widget extension from the previous version before swapping bundles,
+        # preventing chronod from reusing an old-version process whose archives fail validation.
+        /usr/bin/pkill -x DaydropWidget >/dev/null 2>&1 || true
+
         if [ -d "$TARGET" ]; then
           mv "$TARGET" "$BACKUP" || exit 1
         fi
@@ -532,6 +536,12 @@ public final class AppUpdater: ObservableObject {
         fi
 
         /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -f -R "$TARGET" >/dev/null 2>&1 || true
+        if [ -d "$TARGET/Contents/PlugIns/DaydropWidget.appex" ]; then
+          /usr/bin/pluginkit -a "$TARGET/Contents/PlugIns/DaydropWidget.appex" >/dev/null 2>&1 || true
+        fi
+        # Ensure no stale DaydropWidget process respawned mid-swap before launching the new app
+        /usr/bin/pkill -x DaydropWidget >/dev/null 2>&1 || true
+
         /usr/bin/open -n "$TARGET"
         rm -rf "$WORKDIR"
         """

@@ -48,8 +48,17 @@ public enum AppearanceMode: String, CaseIterable, Identifiable, Codable, Sendabl
     }
 }
 
+public struct WidgetPreferencesSnapshot: Equatable, Sendable {
+    public let language: AppLanguage
+    public let theme: AppTheme
+    public let weekStartsOnMonday: Bool
+    public let showHolidayBadges: Bool
+    public let showSolarTerms: Bool
+}
+
 public final class AppPreferences: ObservableObject {
     public static let suiteName = "com.daydrop.shared"
+    public static let widgetKind = "DaydropCalendarWidget"
     public static let shared = AppPreferences()
 
     private let defaults: UserDefaults
@@ -66,6 +75,7 @@ public final class AppPreferences: ObservableObject {
         static let autoDownloadUpdates = "autoDownloadUpdates"
         static let lastUpdateCheckTimestamp = "lastUpdateCheckTimestamp"
         static let lastHolidaySyncTimestamp = "lastHolidaySyncTimestamp"
+        static let lastLaunchedBuildSignature = "lastLaunchedBuildSignature"
     }
 
     @Published public var language: AppLanguage {
@@ -215,23 +225,73 @@ public final class AppPreferences: ObservableObject {
         }
     }
 
-    /// Snapshot readers for WidgetKit timelines without side effects.
-    public static func widgetLanguage() -> AppLanguage {
-        let store = UserDefaults(suiteName: suiteName) ?? .standard
+    /// Forces `cfprefsd` synchronization before reading shared preferences across the App/Widget process boundary.
+    private static func synchronizedSharedDefaults() -> UserDefaults {
+        CFPreferencesAppSynchronize(suiteName as CFString)
+        return UserDefaults(suiteName: suiteName) ?? .standard
+    }
+
+    /// Reads all widget-relevant preferences atomically after a single `cfprefsd` sync
+    /// so every widget size renders with the exact same theme, language, and calendar options.
+    public static func widgetSnapshot() -> WidgetPreferencesSnapshot {
+        let store = synchronizedSharedDefaults()
+
+        let language: AppLanguage
         if let raw = store.string(forKey: Keys.language),
            let parsed = AppLanguage(rawValue: raw) {
-            return parsed
+            language = parsed
+        } else {
+            language = .system
         }
-        return .system
+
+        let theme: AppTheme
+        if let raw = store.string(forKey: Keys.theme),
+           let parsed = AppTheme(rawValue: raw) {
+            theme = parsed
+        } else {
+            theme = .peachSoda
+        }
+
+        let weekStartsOnMonday = store.object(forKey: Keys.weekStartsOnMonday) == nil
+            ? true
+            : store.bool(forKey: Keys.weekStartsOnMonday)
+
+        let showHolidayBadges = store.object(forKey: Keys.showHolidayBadges) == nil
+            ? true
+            : store.bool(forKey: Keys.showHolidayBadges)
+
+        let showSolarTerms = store.object(forKey: Keys.showSolarTerms) == nil
+            ? true
+            : store.bool(forKey: Keys.showSolarTerms)
+
+        return WidgetPreferencesSnapshot(
+            language: language,
+            theme: theme,
+            weekStartsOnMonday: weekStartsOnMonday,
+            showHolidayBadges: showHolidayBadges,
+            showSolarTerms: showSolarTerms
+        )
+    }
+
+    /// Snapshot readers for WidgetKit timelines without side effects.
+    public static func widgetLanguage() -> AppLanguage {
+        widgetSnapshot().language
     }
 
     public static func widgetTheme() -> AppTheme {
-        let store = UserDefaults(suiteName: suiteName) ?? .standard
-        if let raw = store.string(forKey: Keys.theme),
-           let parsed = AppTheme(rawValue: raw) {
-            return parsed
-        }
-        return .peachSoda
+        widgetSnapshot().theme
+    }
+
+    public static func widgetWeekStartsOnMonday() -> Bool {
+        widgetSnapshot().weekStartsOnMonday
+    }
+
+    public static func widgetShowHolidayBadges() -> Bool {
+        widgetSnapshot().showHolidayBadges
+    }
+
+    public static func widgetShowSolarTerms() -> Bool {
+        widgetSnapshot().showSolarTerms
     }
 
     public var lastUpdateCheckDate: Date? {
@@ -265,20 +325,29 @@ public final class AppPreferences: ObservableObject {
         }
     }
 
-    public static func widgetWeekStartsOnMonday() -> Bool {
-        let store = UserDefaults(suiteName: suiteName) ?? .standard
-        if store.object(forKey: Keys.weekStartsOnMonday) == nil { return true }
-        return store.bool(forKey: Keys.weekStartsOnMonday)
+    public var lastLaunchedBuildSignature: String? {
+        get {
+            defaults.string(forKey: Keys.lastLaunchedBuildSignature)
+        }
+        set {
+            if let value = newValue {
+                defaults.set(value, forKey: Keys.lastLaunchedBuildSignature)
+            } else {
+                defaults.removeObject(forKey: Keys.lastLaunchedBuildSignature)
+            }
+            defaults.synchronize()
+            CFPreferencesAppSynchronize(Self.suiteName as CFString)
+        }
     }
 
-    public static func widgetShowHolidayBadges() -> Bool {
-        let store = UserDefaults(suiteName: suiteName) ?? .standard
-        if store.object(forKey: Keys.showHolidayBadges) == nil { return true }
-        return store.bool(forKey: Keys.showHolidayBadges)
+    public static func reloadAllWidgets() {
+        CFPreferencesAppSynchronize(suiteName as CFString)
+        WidgetCenter.shared.reloadTimelines(ofKind: widgetKind)
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     private func reloadWidgets() {
         defaults.synchronize()
-        WidgetCenter.shared.reloadAllTimelines()
+        Self.reloadAllWidgets()
     }
 }

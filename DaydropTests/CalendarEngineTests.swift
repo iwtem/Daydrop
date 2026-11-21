@@ -237,4 +237,42 @@ final class CalendarEngineTests: XCTestCase {
         XCTAssertNil(UpdatePushListener.parseSSEDataLine(openLine))
         XCTAssertNil(UpdatePushListener.parseSSEDataLine("event: keepalive"))
     }
+
+    func testWidgetPreferencesSnapshotConsistency() {
+        let defaults = UserDefaults(suiteName: AppPreferences.suiteName)
+        let originalTheme = defaults?.object(forKey: "appTheme")
+        let originalSolar = defaults?.object(forKey: "showSolarTerms")
+        defer {
+            if let originalTheme {
+                defaults?.set(originalTheme, forKey: "appTheme")
+            } else {
+                defaults?.removeObject(forKey: "appTheme")
+            }
+            if let originalSolar {
+                defaults?.set(originalSolar, forKey: "showSolarTerms")
+            } else {
+                defaults?.removeObject(forKey: "showSolarTerms")
+            }
+            CFPreferencesAppSynchronize(AppPreferences.suiteName as CFString)
+        }
+
+        defaults?.set(AppTheme.mintCoral.rawValue, forKey: "appTheme")
+        defaults?.set(false, forKey: "showSolarTerms")
+        CFPreferencesAppSynchronize(AppPreferences.suiteName as CFString)
+
+        let snap = AppPreferences.widgetSnapshot()
+        XCTAssertEqual(snap.theme, .mintCoral)
+        XCTAssertEqual(AppPreferences.widgetTheme(), .mintCoral)
+        XCTAssertEqual(snap.showSolarTerms, false)
+        XCTAssertEqual(AppPreferences.widgetShowSolarTerms(), false)
+
+        defaults?.set(AppTheme.irisBerry.rawValue, forKey: "appTheme")
+        defaults?.set(true, forKey: "showSolarTerms")
+        CFPreferencesAppSynchronize(AppPreferences.suiteName as CFString)
+
+        let updatedSnap = AppPreferences.widgetSnapshot()
+        XCTAssertEqual(updatedSnap.theme, .irisBerry)
+        XCTAssertEqual(updatedSnap.showSolarTerms, true)
+        XCTAssertFalse(AppState.currentAppBuildSignature().isEmpty)
+    }
 }

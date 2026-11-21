@@ -39,6 +39,7 @@ final class AppState: ObservableObject {
             self?.holidayRevision += 1
         }
         HolidayStore.shared.syncIfNeededOnLaunch()
+        reconcileWidgetExtensionOnLaunch()
         Task { @MainActor in
             AppUpdater.shared.startBackgroundScheduler()
         }
@@ -140,7 +141,72 @@ final class AppState: ObservableObject {
         let cal = Calendar.current
         if !cal.isDate(today, inSameDayAs: now) {
             today = now
-            WidgetCenter.shared.reloadAllTimelines()
+            AppPreferences.reloadAllWidgets()
+        }
+    }
+
+    static func currentAppBuildSignature(bundle: Bundle = .main) -> String {
+        let short = (bundle.infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0"
+        let build = (bundle.infoDictionary?["CFBundleVersion"] as? String) ?? "0"
+        return "\(short) (\(build))"
+    }
+
+    /// Reconciles the embedded WidgetKit extension after an app update (both in-app and manual)
+    /// so `chronod` never talks to a stale `DaydropWidget` process whose CFBundleVersion conflicts
+    /// with LaunchServices — which would otherwise cause all widget timeline reloads to fail and
+    /// fall back to stale, redacted placeholders with outdated themes.
+    private func reconcileWidgetExtensionOnLaunch() {
+        guard ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] == nil else {
+            return
+        }
+
+        let bundleURL = Bundle.main.bundleURL
+        guard bundleURL.pathExtension == "app" else { return }
+
+        let currentSignature = Self.currentAppBuildSignature()
+        let lastSignature = AppPreferences.shared.lastLaunchedBuildSignature
+        let bundlePath = bundleURL.path
+        let isTemporaryBuildPath = bundlePath.hasPrefix("/tmp/")
+            || bundlePath.hasPrefix("/private/tmp/")
+            || bundlePath.contains("/DerivedData/")
+
+        if lastSignature != currentSignature && !isTemporaryBuildPath {
+            AppPreferences.shared.lastLaunchedBuildSignature = currentSignature
+            let widgetAppexPath = bundleURL
+                .appendingPathComponent("Contents/PlugIns/DaydropWidget.appex")
+                .path
+
+            DispatchQueue.global(qos: .utility).async {
+                Self.runSilently("/usr/bin/pkill", arguments: ["-x", "DaydropWidget"])
+                Self.runSilently(
+                    "/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister",
+                    arguments: ["-f", "-R", bundlePath]
+                )
+                if FileManager.default.fileExists(atPath: widgetAppexPath) {
+                    Self.runSilently("/usr/bin/pluginkit", arguments: ["-a", widgetAppexPath])
+                }
+                Self.runSilently("/usr/bin/pkill", arguments: ["-x", "DaydropWidget"])
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+                    AppPreferences.reloadAllWidgets()
+                }
+            }
+        } else {
+            AppPreferences.reloadAllWidgets()
+        }
+    }
+
+    private static func runSilently(_ executable: String, arguments: [String]) {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: executable)
+        process.arguments = arguments
+        process.standardOutput = FileHandle.nullDevice
+        process.standardError = FileHandle.nullDevice
+        do {
+            try process.run()
+            process.waitUntilExit()
+        } catch {
+            // Best-effort helper; never block or crash app startup
         }
     }
 
