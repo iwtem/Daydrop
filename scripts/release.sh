@@ -26,15 +26,15 @@ for plist in Daydrop/Info.plist DaydropWidget/Info.plist; do
 done
 
 echo "==> 2. Running unit tests..."
-xcodebuild -project Daydrop.xcodeproj -scheme Daydrop -configuration Debug -derivedDataPath /tmp/DaydropDerivedData test
+xcodebuild -project Daydrop.xcodeproj -scheme Daydrop -configuration Debug -derivedDataPath .tmp/DerivedData test
 
 echo "==> 3. Building Universal Release Daydrop.app..."
-xcodebuild -project Daydrop.xcodeproj -scheme Daydrop -configuration Release -derivedDataPath /tmp/DaydropReleaseBuild build
+xcodebuild -project Daydrop.xcodeproj -scheme Daydrop -configuration Release -derivedDataPath .tmp/ReleaseBuild build
 
 echo "==> 4. Packaging dist/Daydrop-v${VERSION}-macOS.zip..."
 mkdir -p dist
 rm -rf dist/Daydrop.app "dist/Daydrop-v${VERSION}-macOS.zip"
-ditto /tmp/DaydropReleaseBuild/Build/Products/Release/Daydrop.app dist/Daydrop.app
+ditto .tmp/ReleaseBuild/Build/Products/Release/Daydrop.app dist/Daydrop.app
 ditto -c -k --sequesterRsrc --keepParent dist/Daydrop.app "dist/Daydrop-v${VERSION}-macOS.zip"
 
 echo "==> 5. Committing & pushing to origin/main..."

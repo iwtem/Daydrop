@@ -168,6 +168,7 @@ final class AppState: ObservableObject {
         let bundlePath = bundleURL.path
         let isTemporaryBuildPath = bundlePath.hasPrefix("/tmp/")
             || bundlePath.hasPrefix("/private/tmp/")
+            || bundlePath.contains("/.tmp/")
             || bundlePath.contains("/DerivedData/")
 
         if lastSignature != currentSignature && !isTemporaryBuildPath {

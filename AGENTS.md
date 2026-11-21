@@ -58,14 +58,14 @@ Whenever you add or remove a `.swift` or resource file:
 ### Regenerating Icons
 AppIcon (`AppIcon.appiconset`) and MenuBarIcon (`MenuBarIcon.imageset`, 20pt template image) are vector-generated:
 ```bash
-swift -module-cache-path /tmp/swift_module_cache scripts/generate_icons.swift
+swift -module-cache-path .tmp/swift_module_cache scripts/generate_icons.swift
 ```
 
 ---
 
 ## 3. Local Build & Test Commands
 
-The project uses local ad-hoc signing (`CODE_SIGN_IDENTITY = "-"`, `CODE_SIGN_STYLE = Manual`), so it builds and tests out of the box without a paid Apple Developer account.
+The project uses local ad-hoc signing (`CODE_SIGN_IDENTITY = "-"`, `CODE_SIGN_STYLE = Manual`), so it builds and tests out of the box without a paid Apple Developer account. All intermediate build outputs live under `.tmp/` (git-ignored).
 
 ### Run Unit Tests (Required Before Every Release)
 ```bash
@@ -73,7 +73,7 @@ xcodebuild \
   -project Daydrop.xcodeproj \
   -scheme Daydrop \
   -configuration Debug \
-  -derivedDataPath /tmp/DaydropDerivedData \
+  -derivedDataPath .tmp/DerivedData \
   test
 ```
 
@@ -83,7 +83,7 @@ xcodebuild \
   -project Daydrop.xcodeproj \
   -scheme Daydrop \
   -configuration Release \
-  -derivedDataPath /tmp/DaydropReleaseBuild \
+  -derivedDataPath .tmp/ReleaseBuild \
   build
 ```
 
@@ -113,7 +113,7 @@ Follow **every** step in exact order:
    ```bash
    mkdir -p dist
    rm -rf dist/Daydrop.app "dist/Daydrop-v<VERSION>-macOS.zip"
-   ditto /tmp/DaydropReleaseBuild/Build/Products/Release/Daydrop.app dist/Daydrop.app
+   ditto .tmp/ReleaseBuild/Build/Products/Release/Daydrop.app dist/Daydrop.app
    ditto -c -k --sequesterRsrc --keepParent dist/Daydrop.app "dist/Daydrop-v<VERSION>-macOS.zip"
    ```
    > Asset naming MUST end in `.zip` (convention: `Daydrop-v<VERSION>-macOS.zip`). `dist/` is git-ignored — **never commit binaries to git**.

@@ -26,8 +26,9 @@ xcuserdata/
 *.dSYM.zip
 *.dSYM
 
-# Build artifacts / local releases
+# Build artifacts / local releases / temporary agent outputs
 dist/
+.tmp/
 
 # SwiftPM
 .build/
