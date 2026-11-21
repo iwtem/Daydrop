@@ -143,12 +143,14 @@ struct ExpandedCalendarView: View {
 
             Spacer()
 
-            Picker("", selection: $appState.expandedViewMode) {
-                Text(l10n.viewModeMonth).tag(ExpandedViewMode.month)
-                Text(l10n.viewModeYear).tag(ExpandedViewMode.year)
-            }
-            .pickerStyle(.segmented)
-            .frame(width: 148)
+            ThemedSegmentedControl(
+                selection: $appState.expandedViewMode,
+                options: [
+                    (.month, l10n.viewModeMonth),
+                    (.year, l10n.viewModeYear)
+                ],
+                tint: palette.primaryAccent
+            )
         }
         .padding(.horizontal, 20)
         .padding(.top, 8)

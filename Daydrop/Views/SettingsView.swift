@@ -14,13 +14,9 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Header identity card
+            // Header identity card (live vector icon adapts immediately to active theme)
             HStack(spacing: 14) {
-                if let appIcon = NSImage(named: "AppIcon") ?? NSApp.applicationIconImage {
-                    Image(nsImage: appIcon)
-                        .resizable()
-                        .frame(width: 52, height: 52)
-                }
+                ThemedAppIconView(palette: palette, size: 50)
 
                 VStack(alignment: .leading, spacing: 3) {
                     Text(l10n.appBrandFooter)
@@ -52,12 +48,15 @@ struct SettingsView: View {
                         }
                     }
 
-                    Picker(l10n.labelAppearance, selection: $preferences.appearanceMode) {
-                        ForEach(AppearanceMode.allCases) { mode in
-                            Text(l10n.appearanceName(mode)).tag(mode)
-                        }
+                    HStack {
+                        Text(l10n.labelAppearance)
+                        Spacer()
+                        ThemedSegmentedControl(
+                            selection: $preferences.appearanceMode,
+                            options: AppearanceMode.allCases.map { ($0, l10n.appearanceName($0)) },
+                            tint: palette.primaryAccent
+                        )
                     }
-                    .pickerStyle(.segmented)
                 }
 
                 Section(l10n.labelTheme) {
@@ -65,11 +64,15 @@ struct SettingsView: View {
                 }
 
                 Section(l10n.sectionCalendarWidgets) {
-                    Picker(l10n.labelWeekStart, selection: $preferences.weekStartsOnMonday) {
-                        Text(l10n.monday).tag(true)
-                        Text(l10n.sunday).tag(false)
+                    HStack {
+                        Text(l10n.labelWeekStart)
+                        Spacer()
+                        ThemedSegmentedControl(
+                            selection: $preferences.weekStartsOnMonday,
+                            options: [(true, l10n.monday), (false, l10n.sunday)],
+                            tint: palette.primaryAccent
+                        )
                     }
-                    .pickerStyle(.segmented)
 
                     Toggle(l10n.labelShowHolidays, isOn: $preferences.showHolidayBadges)
                     Toggle(l10n.labelShowSolarTerms, isOn: $preferences.showSolarTerms)
@@ -115,6 +118,8 @@ struct SettingsView: View {
             }
             .formStyle(.grouped)
             .scrollContentBackground(.hidden)
+            .toggleStyle(ThemedSwitchToggleStyle(tint: palette.primaryAccent))
+            .tint(palette.primaryAccent)
 
             Divider()
 

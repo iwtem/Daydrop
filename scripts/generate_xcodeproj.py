@@ -42,6 +42,7 @@ APP_SWIFT = [
     "Daydrop/Views/YearOverviewView.swift",
     "Daydrop/Views/ExpandedCalendarView.swift",
     "Daydrop/Views/SettingsView.swift",
+    "Daydrop/Views/ThemedControls.swift",
 ]
 
 APP_RESOURCES = [

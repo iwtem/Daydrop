@@ -27,6 +27,7 @@
 		2F9EE008D78ED04FE311711D /* YearOverviewView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = AA0C46359A37222D0F6658FC /* YearOverviewView.swift */; };
 		4FC25090CE9ACF993A1681BA /* ExpandedCalendarView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */; };
 		CC9B79480B975120C7ED85EA /* SettingsView.swift in AppSources */ = {isa = PBXBuildFile; fileRef = C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */; };
+		FF5BF9FB657083125468CD0D /* ThemedControls.swift in AppSources */ = {isa = PBXBuildFile; fileRef = 7D061D7B4282895EF534459E /* ThemedControls.swift */; };
 		DBAF92D133176A8B560C6640 /* holidays_cn.json in AppResources */ = {isa = PBXBuildFile; fileRef = 62FB9BC2B155F3081B2D34BB /* holidays_cn.json */; };
 		81DFD2C3FAF0DB4430709378 /* Assets.xcassets in AppResources */ = {isa = PBXBuildFile; fileRef = D9E4920EC514D62F82540884 /* Assets.xcassets */; };
 		12F35E944812D59E2E1891EE /* SolarTermCalculator.swift in WidgetSources */ = {isa = PBXBuildFile; fileRef = 13E3428E19877270E5812A4F /* SolarTermCalculator.swift */; };
@@ -102,6 +103,7 @@
 		AA0C46359A37222D0F6658FC /* YearOverviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "YearOverviewView.swift"; path = "Daydrop/Views/YearOverviewView.swift"; sourceTree = SOURCE_ROOT; };
 		CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ExpandedCalendarView.swift"; path = "Daydrop/Views/ExpandedCalendarView.swift"; sourceTree = SOURCE_ROOT; };
 		C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "SettingsView.swift"; path = "Daydrop/Views/SettingsView.swift"; sourceTree = SOURCE_ROOT; };
+		7D061D7B4282895EF534459E /* ThemedControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = "ThemedControls.swift"; path = "Daydrop/Views/ThemedControls.swift"; sourceTree = SOURCE_ROOT; };
 		D9E4920EC514D62F82540884 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = "Assets.xcassets"; path = "Daydrop/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
 		9B7014EAD05827D4844FADFE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info.plist"; path = "Daydrop/Info.plist"; sourceTree = SOURCE_ROOT; };
 		9D8C36255368823C697819CC /* Daydrop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = "Daydrop.entitlements"; path = "Daydrop/Daydrop.entitlements"; sourceTree = SOURCE_ROOT; };
@@ -189,6 +191,7 @@
 				AA0C46359A37222D0F6658FC /* YearOverviewView.swift */,
 				CD80E2F3388D7B5630375E27 /* ExpandedCalendarView.swift */,
 				C0CC9C08AE60E4F876F9C829 /* SettingsView.swift */,
+				7D061D7B4282895EF534459E /* ThemedControls.swift */,
 				D9E4920EC514D62F82540884 /* Assets.xcassets */,
 				9B7014EAD05827D4844FADFE /* Info.plist */,
 				9D8C36255368823C697819CC /* Daydrop.entitlements */,
@@ -377,6 +380,7 @@
 				2F9EE008D78ED04FE311711D /* YearOverviewView.swift */,
 				4FC25090CE9ACF993A1681BA /* ExpandedCalendarView.swift */,
 				CC9B79480B975120C7ED85EA /* SettingsView.swift */,
+				FF5BF9FB657083125468CD0D /* ThemedControls.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
